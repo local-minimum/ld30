@@ -21,8 +21,8 @@ var UP = 38;
 var LEFT = 37;
 var RIGHT = 39;
 var ENTER = 13;
-var BASE_OPACITY = 0.3;
-var ACTIVE_OPACITY = 0.45;
+var BASE_OPACITY = 0.45;
+var ACTIVE_OPACITY = 0.25;
 var STAGE_OPACITY = 1;
 var JUMP_TO_FUNC = undefined;
 var CHEAT_FUNC = undefined;
@@ -1196,12 +1196,15 @@ Engine.prototype = {
 				tween2.play();
 			}
             tween.play();
-            //this.drawLayers[i].offsetX(this.offsetX); 
-            //this.drawLayers[i].offsetY(this.offsetY); 
+
+	        this.drawLayers[MODEL.player[0]].moveToBottom();
+
             this.moved = false;
         }
-        for (var i=0; i<this.drawLayers.length; i++)
-            this.drawLayers[i].draw()
+
+        for (var i=0; i<this.drawLayers.length; i++) {
+            this.drawLayers[i].draw();
+		}
 
         if (this.cheaters.length > 0)
         	this.UI.draw();

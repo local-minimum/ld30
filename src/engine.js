@@ -27,6 +27,7 @@ var STAGE_OPACITY = 1;
 var JUMP_TO_FUNC = undefined;
 var CHEAT_FUNC = undefined;
 var REGRET_CHEAT_FUNC = undefined;
+var JUMP_TO_ELEM = $("#jumpCode");
 
 function Mob()
 {
@@ -1464,7 +1465,7 @@ Engine.prototype = {
 var e = new Engine();
 e.start();
 function checkKey(ev) {    
-    if ($("#jumpCode").is(":focus"))
+    if (JUMP_TO_ELEM.is(":focus"))
         return true;
 
     var code = ev.keyCode || ev.witch;

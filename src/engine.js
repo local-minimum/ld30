@@ -1134,16 +1134,18 @@ Engine.prototype = {
         if (!this.allowInput)
             this.drawLayers[this.COINS].visible(false);
 
-        if (this.ticker % 20 > 9)
-            this.lvlGoal.y(MODEL.goal[1] * 42 - 19 + this.ticker % 10);
-        else
-            this.lvlGoal.y(MODEL.goal[1] * 42 - 10 - this.ticker % 10);
+		if (this.ticker % 2) {
+			if (this.ticker % 20 > 9)
+				this.lvlGoal.y(MODEL.goal[1] * 42 - 19 + this.ticker % 10);
+			else
+				this.lvlGoal.y(MODEL.goal[1] * 42 - 10 - this.ticker % 10);
 
-        for (var y=0; y<MODEL.coins.length; y++) {
-            for (var x=0; x<MODEL.coins[0].length; x++) {
-                this.coins[y][x].visible(MODEL.coins[y][x] == 1);
-            }
-        }
+			for (var y=0; y<MODEL.coins.length; y++) {
+				for (var x=0; x<MODEL.coins[0].length; x++) {
+					this.coins[y][x].visible(MODEL.coins[y][x] == 1);
+				}
+			}
+		}
 
         //this.coinsText.text("Shards: " + this.curCoins);
 

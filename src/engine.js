@@ -4,48 +4,90 @@ function Mob()
 {
     this.DEBUG = true;
 
+    /*
+     * Path of the patroling mob.
+     */
     this.path = undefined;
+
+    /*
+     * Position in the path.
+     */
     this.position = 0;
 }
 
 Mob.prototype = 
 {
+    /*
+     * Get the current position of the mob.
+     */
     "getPos": function()
     {
         if (this.DEBUG)
         {
-            console.log("get postion");
+            console.log("Get mob position");
+            console.log(this.path[this.position][0]);
+            console.log(this.path[this.position][1]);
+            console.log(this.path[this.position][2]);
         }
 
         return this.path[this.position];
     },
 
+    /*
+     * Move mob to next position in the path.
+     */
     "move": function()
     {
-        if (this.DEBUG)
-        {
-            console.log("move mob");
-        }
-
         this.position++;
 
         if (this.position == this.path.length)
         {
             this.position = 0;
         }
+
+        if (this.DEBUG)
+        {
+            console.log("Move mob to next position on path");
+            console.log(this.path[this.position][0]);
+            console.log(this.path[this.position][1]);
+            console.log(this.path[this.position][2]);
+        }
     }
 }
 
 function Model()
 {
-    this.DEBUG = false;
+    this.DEBUG = true;
 
-	this.ready = false;
+    this.ready = false;
+
+    /*
+     * Three dimensional matrix, [layer][up-to-down][left-to-right],
+     * describing the level paths.
+     */
     this.level = undefined;
+
+    /*
+     * The player start position.
+     */
+    this.start = undefined;
+
+    /*
+     * The current player position.
+     */
     this.player = undefined;
+
+    /*
+     * The goal position.
+     */
     this.goal = undefined;
-    this.onLevelCallback = undefined;
+
+    /*
+     * A list of mobs patroling the level.
+     */
     this.mobs = [];
+
+    this.onLevelCallback = undefined;
 }
 
 Model.prototype = 
@@ -60,7 +102,13 @@ Model.prototype =
             console.log("lvlData object is false in Model setLevel");
         }
 
+        if (this.DEBUG)
+        {
+	    console.log("Setting up new level");
+        }
+
         this.level = lvlData.level;
+        this.start = lvlData.start;
         this.player = lvlData.start;
         this.goal = lvlData.goal;
 
@@ -88,10 +136,11 @@ Model.prototype =
                 path = path.concat(tmp);
             }
 
+
             // Add layer to coordinates.
             mob.path = path.map(function(pos)
             {
-                return pos.unshift(lvlData.enemies[i].layer);
+                return [lvlData.enemies[i].layer].concat(pos);
             });
 
             this.mobs.push(mob);
@@ -99,6 +148,7 @@ Model.prototype =
 
         if (this.DEBUG)
         {
+      	    console.log("Level data");
 	    console.log(lvlData);
             console.log(this.level);
             console.log(this.player);
@@ -106,10 +156,203 @@ Model.prototype =
             console.log(this.mobs);
         }
 
-		if (this.onLevelCallback)
-			this.onLevelCallback();
+        if (this.onLevelCallback)
+        {
+	    this.onLevelCallback();
+        }
 
         this.ready = true;
+    },
+
+    /*
+     * Restart level by resetting player and mob positions.
+     */
+    "restart": function()
+    {
+        this.player = this.start;
+
+        for (var i in this.mobs)
+        {
+            this.mobs[i].position = 0;
+        }
+
+        if (this.DEBUG)
+        {
+	    console.log("Restarting level");
+            console.log(this.level);
+            console.log(this.player);
+            console.log(this.goal);
+            console.log(this.mobs);
+        }
+    },
+
+    /*
+     * Move player up one layer, regardless of validity.
+     */
+    "ascend": function()
+    {
+        this.player = [this.player[0] + 1, this.player[1], this.player[2]];
+
+        if (this.DEBUG)
+        {
+	    console.log("Moving player up one layer");
+            console.log(this.player[0]);
+            console.log(this.player[1]);
+            console.log(this.player[2]);
+        }
+    },
+
+    /*
+     * Move player down one layer, regardless of validity.
+     */
+    "descend": function()
+    {
+        this.player = [this.player[0] - 1, this.player[1], this.player[2]];
+
+        if (this.DEBUG)
+        {
+	    console.log("Moving player down one layer");
+            console.log(this.player[0]);
+            console.log(this.player[1]);
+            console.log(this.player[2]);
+        }
+    },
+
+    /*
+     * Move player to the right, regardless of validity.
+     */
+    "right": function()
+    {
+        this.player = [this.player[0], this.player[1], this.player[2] + 1];
+
+        if (this.DEBUG)
+        {
+	    console.log("Moving player to the right");
+            console.log(this.player[0]);
+            console.log(this.player[1]);
+            console.log(this.player[2]);
+        }
+    },
+
+    /*
+     * Move player to the left, regardless of validity.
+     */
+    "left": function()
+    {
+        this.player = [this.player[0], this.player[1], this.player[2] - 1];
+
+        if (this.DEBUG)
+        {
+	    console.log("Moving player to the left");
+            console.log(this.player[0]);
+            console.log(this.player[1]);
+            console.log(this.player[2]);
+        }
+    },
+
+    /*
+     * Move player upwards, regardless of validity.
+     */
+    "up": function()
+    {
+        this.player = [this.player[0], this.player[1] + 1, this.player[2]];
+
+        if (this.DEBUG)
+        {
+	    console.log("Moving player upwards");
+            console.log(this.player[0]);
+            console.log(this.player[1]);
+            console.log(this.player[2]);
+        }
+    },
+
+    /*
+     * Move player downwards, regardless of validity.
+     */
+    "down": function()
+    {
+        this.player = [this.player[0], this.player[1] - 1, this.player[2]];
+
+        if (this.DEBUG)
+        {
+	    console.log("Moving player downwards");
+            console.log(this.player[0]);
+            console.log(this.player[1]);
+            console.log(this.player[2]);
+        }
+    },
+
+    /*
+     * Check if player position is valid.
+     */
+    "isValidPosition": function()
+    {
+        if (this.DEBUG)
+        {
+	    console.log("Checking if player position is valid");
+            console.log(this.player[0]);
+            console.log(this.player[1]);
+            console.log(this.player[2]);
+        }
+
+        // First check within index bounds, then check player standing on tile.
+        return this.player[0] >= 0 && this.player[1] >= 0 && this.player[2] >= 0
+                && this.player[0] < this.level.length
+                && this.player[1] < this.level[0].length
+                && this.player[2] < this.level[0][0].length
+                && this.level[this.player[0], this.player[1],
+                        this.player[2]] != 0;
+    },
+
+    /*
+     * Check if mob caught player.
+     */
+    "isCaught": function()
+    {
+        if (this.DEBUG)
+        {
+            console.log("Checking if player is caught");
+        }
+
+        for (var i in this.mobs)
+        {
+            if (this.player[0] == this.mobs[i].getPos()[0]
+                    && this.player[1] == this.mobs[i].getPos()[1]
+                    && this.player[2] == this.mobs[i].getPos()[2])
+            {
+                return true;
+            }
+        }
+
+        return false;
+    },
+
+    /*
+     * Moves the mobs to their next position on their paths.
+     */
+    "moveMobs": function()
+    {
+        if (this.DEBUG)
+        {
+            console.log("Move the mobs");
+        }
+        
+        for (var i in this.mobs)
+        {
+            this.mobs[i].move();
+        }
+    },
+
+    "activeLayers": function()
+    {
+        if (this.DEBUG)
+        {
+            console.log("Get active layers");
+        }
+
+        return [this.level[0][this.player[1]][this.player[2]],
+                this.level[1][this.player[1]][this.player[2]],
+                this.level[2][this.player[1]][this.player[2]]];
     }
 }
 

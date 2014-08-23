@@ -1,13 +1,16 @@
 "use strict";
 
 function Model() {
-
+    this.level = undefined;
+    this.player = undefined;
+    this.goal = undefined;
+    this.mobs = [];
 }
 
 Model.prototype = {
 
 	"setLevel": function(lvlData) {
-
+            this.level = lvlData.level;
 	}
 }
 

@@ -136,10 +136,11 @@ Model.prototype =
                 path = path.concat(tmp);
             }
 
+
             // Add layer to coordinates.
             mob.path = path.map(function(pos)
             {
-                return pos.unshift(lvlData.enemies[i].layer);
+                return [lvlData.enemies[i].layer].concat(pos);
             });
 
             this.mobs.push(mob);
@@ -324,6 +325,34 @@ Model.prototype =
         }
 
         return false;
+    },
+
+    /*
+     * Moves the mobs to their next position on their paths.
+     */
+    "moveMobs": function()
+    {
+        if (this.DEBUG)
+        {
+            console.log("Move the mobs");
+        }
+        
+        for (var i in this.mobs)
+        {
+            this.mobs[i].move();
+        }
+    },
+
+    "activeLayers": function()
+    {
+        if (this.DEBUG)
+        {
+            console.log("Get active layers");
+        }
+
+        return [this.level[0][this.player[1]][this.player[2]],
+                this.level[1][this.player[1]][this.player[2]],
+                this.level[2][this.player[1]][this.player[2]]];
     }
 }
 

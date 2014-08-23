@@ -1,5 +1,10 @@
 "use strict";
 
+var DOWN = 40;
+var UP = 38;
+var LEFT = 37;
+var RIGHT = 39;
+
 function Mob()
 {
     this.DEBUG = false;
@@ -406,6 +411,8 @@ function Engine() {
 	this.drawLayers = new Array();
 	this.stage = undefined;
 	this.ticker = 0;
+	this.requestMove = undefined;
+	this.requestColor = undefined;
 }
 
 Engine.prototype = {
@@ -557,9 +564,22 @@ Engine.prototype = {
 			} else {
 
 				if (MODEL.ready) {
-					if (this.ticker % 16 == 0)
+					if (this.ticker % 17 == 0)
 						MODEL.moveMobs();
 
+					if (this.ticker % 19 == 0) {
+
+						if (this.requestMove == UP)
+							MODEL.up();
+						else if (this.requestMove == DOWN)
+							MODEL.down();
+						else if (this.requestMove == LEFT)
+							MODEL.left();
+						else if (this.requestMove == RIGHT)
+							MODEL.right();
+
+						this.requestMove = undefined;
+					}
 					
 				}
 			}
@@ -611,3 +631,16 @@ $.ajaxSetup({beforeSend: function(xhr){
 
 var e = new Engine();
 e.start();
+function checkKey(ev) {	
+	var code = ev.keyCode || ev.witch;
+	if (code == UP)
+		e.requestMove = UP;
+	else if (code == RIGHT)
+		e.requestMove = RIGHT;
+	else if (code == DOWN)
+		e.requestMove = DOWN;
+	else if (code == LEFT)
+		e.requestMove = LEFT;
+}
+
+$(document).keydown (checkKey);

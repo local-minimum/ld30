@@ -171,7 +171,7 @@ Engine.prototype = {
 			$('<img>', {src: imageArray[i]})
 				.load(function() {
 					var fname = this.src.substring(this.src.lastIndexOf('/')+1);
-					if (fname.startsWith("c")) {
+					if (fname[0] == "c") {
 						DATA.tiles[parseInt(fname.replace(/^\D+/g, ''))] = this;
 					}
 					DATA._parts++;

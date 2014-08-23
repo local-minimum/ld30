@@ -1,5 +1,17 @@
 "use strict";
 
+if (!Date.now) {
+	    Date.now = function() { return new Date().getTime(); };
+}
+
+$.ajaxSetup({beforeSend: function(xhr){
+  if (xhr.overrideMimeType)
+  {
+    xhr.overrideMimeType("application/json");
+  }
+}
+});
+
 var DOWN = 40;
 var UP = 38;
 var LEFT = 37;
@@ -101,6 +113,14 @@ function Model()
      * Allowed layers
      */
     this.allowedLayers = new Array();
+
+    /*
+     * Coins
+     * */
+
+    this._coins = undefined;
+    this.coins = undefined;
+
 }
 
 Model.prototype = 
@@ -126,6 +146,7 @@ Model.prototype =
         this.goal = lvlData.goal;
 
 		this._setAllowedLayers();
+		
 
         // Create the mobs
         for (var i in lvlData.enemies)
@@ -161,10 +182,23 @@ Model.prototype =
             this.mobs.push(mob);
         }
 
+		//Generate Coin-Map
+		this._coins = new Array();
+		this.coins = new Array();
+		var t = Date.now();
+		for (var y=0; y<this.level[0].length; y++) {
+			this._coins.push(new Array());
+			this.coins.push(new Array());
+			for (var x=0; x<this.level[0][0].length; x++) {
+				this._coins[y].push(t);
+				this.coins[y].push(0);
+			}
+		}
+
         if (this.DEBUG)
         {
       	    console.log("Level data");
-	    console.log(lvlData);
+	    	console.log(lvlData);
             console.log(this.level);
             console.log(this.player);
             console.log(this.goal);
@@ -180,8 +214,34 @@ Model.prototype =
     },
 
 	/*
-	 * Setting the allowed layers
+	 * Ask if player gets coin
 	 */
+
+	"coinAtPlayer": function() {
+		return this.coins[this.player[1]][this.player[2]]
+	},
+
+
+	/*
+	 * Let coins know where player stands
+	 */
+
+	"setCoinsStatus": function(delta) {
+		var t = Date.now();
+		this._coins[this.player[1]][this.player[2]] = t;
+		this._coins[this.goal[1]][this.goal[2]] = t;
+		this.coins[this.player[1]][this.player[2]] = 0;
+		for (var y=0;y<this.coins.length;y++) {
+			for (var x=0; x<this.coins[0].length;x++) {
+				if (this.coins[y][x] < 1) {
+					this.coins[y][x] = (t - this._coins[y][x]) / delta; 
+					if (this.coins[y][x] > 1)
+						this.coins[y][x] = 1;
+				}
+			}
+		}
+		return this;
+	},
 
 	"_setAllowedLayers" : function() {
 		this.allowedLayers = [];
@@ -347,7 +407,7 @@ Model.prototype =
         	for (var i=0; i<this.allowedLayers.length;i++) {
 				if (this.level[this.allowedLayers[i]][this.player[1]][this.player[2]] != 0) {
 					val = true;
-					this.player[0] = i;
+					this.player[0] = this.allowedLayers[i];
 					break;
 				}
 			}
@@ -450,6 +510,9 @@ DATA.loading = function() {
  */
 
 function Engine() {
+	this.MOVABLES = 4;
+	this.COINS = 3;
+
 	this.curLevel = 0;	
 	this.maxLevel = 1;
 	this.inMenus = false;
@@ -458,11 +521,15 @@ function Engine() {
 	this.offsetY;
 	this.player = undefined;
 	this.mobs = undefined;
+	this.coins = undefined;
 	this.drawLayers = new Array();
 	this.stage = undefined;
 	this.ticker = 0;
 	this.requestMove = undefined;
 	this.requestColor = undefined;
+	this.levelStartTime = undefined;
+	this.coinDelta = 4500;
+	this.curCoins = 50;
 }
 
 Engine.prototype = {
@@ -535,24 +602,43 @@ Engine.prototype = {
 				this.stage.add(this.drawLayers[i]);
 		}
 
-		if (this.drawLayers.length < 4) {
-			this.drawLayers[3] = new Kinetic.Layer();
-			this.stage.add(this.drawLayers[3]);
+		if (this.drawLayers.length < this.COINS + 1) {
+			this.drawLayers[this.COINS] = new Kinetic.Layer();
+			this.stage.add(this.drawLayers[this.COINS]);
 		} else {
-			this.drawLayers[3].destroyChildren();
+			this.drawLayers[this.COINS].destroyChildren();
+		}
+		this.coins = [];
+		for (var y=0; y<MODEL.coins.length; y++) {
+			this.coins.push([]);
+			for (var x=0; x<MODEL.coins[0].length; x++) {
+				this.coins[y].push(DATA.imgs["coin"].clone({
+					x: x * 64 + 26, y: y * 42 + 8}));
+				this.drawLayers[this.COINS].add(this.coins[y][x]);
+				this.coins[y][x].visible(MODEL.coins[y][x] == 1);
+			}
+		}
+
+		
+		if (this.drawLayers.length < this.MOVABLES + 1) {
+			this.drawLayers[this.MOVABLES] = new Kinetic.Layer();
+			this.stage.add(this.drawLayers[this.MOVABLES]);
+		} else {
+			this.drawLayers[this.MOVABLES].destroyChildren();
 		}
 		this.player = DATA.imgs["player"].clone({
 			x: MODEL.player[2] * 64, y: MODEL.player[1] * 42});
-		this.drawLayers[3].add(this.player);
+		this.drawLayers[this.MOVABLES].add(this.player);
 
 		this.mobs = new Array();
 		for (var i=0; i < MODEL.mobs.length; i++) {
 			var mPos = MODEL.mobs[i].getPos();
 			this.mobs[i] = DATA.imgs["mob"].clone({
 				x: mPos[2]*64, y: mPos[1] * 42});
-			this.drawLayers[3].add(this.mobs[i]);
+			this.drawLayers[this.MOVABLES].add(this.mobs[i]);
 			};
 		
+		this.levelStartTime = Date.now();
 	},
 
 	"drawLoading": function() {
@@ -580,6 +666,11 @@ Engine.prototype = {
 		this.offsetX = (MODEL.width - MODEL.player[0]) * 64 - 200;
 		var aL = MODEL.activeLayers();
 		
+		for (var y=0; y<MODEL.coins.length; y++) {
+			for (var x=0; x<MODEL.coins[0].length; x++) {
+				this.coins[y][x].visible(MODEL.coins[y][x] == 1);
+			}
+		}
 
 		for (var i=0; i<this.drawLayers.length; i++) {
 			this.drawLayers[i].offsetX(this.player.x() - 200);
@@ -640,7 +731,11 @@ Engine.prototype = {
 							MODEL.left();
 						else if (this.requestMove == RIGHT)
 							MODEL.right();
+						
+						if (MODEL.coinAtPlayer())
+							this.curCoins ++;
 
+						MODEL.setCoinsStatus(this.coinDelta);
 						this.requestMove = undefined;
 					}
 					
@@ -669,7 +764,8 @@ Engine.prototype = {
 				[1, "img/c1.png"],
 				[2, "img/c2.png"],
 				["player", "img/player.png"],
-				["mob", "img/mob.png"]]);
+				["mob", "img/mob.png"],
+				["coin", "img/coin.png"]]);
 		
 		//TODO: A hack to load first level
 		var f1 = $.proxy(this, "nextLevel");
@@ -684,14 +780,6 @@ Engine.prototype = {
 	}
 }
 
-$.ajaxSetup({beforeSend: function(xhr){
-  if (xhr.overrideMimeType)
-  {
-    xhr.overrideMimeType("application/json");
-  }
-}
-});
-
 var e = new Engine();
 e.start();
 function checkKey(ev) {	
@@ -704,6 +792,10 @@ function checkKey(ev) {
 		e.requestMove = DOWN;
 	else if (code == LEFT)
 		e.requestMove = LEFT;
+	else if (code == 82)
+		MODEL.restart();
+	else 
+		console.log(code);
 }
 
 $(document).keydown (checkKey);

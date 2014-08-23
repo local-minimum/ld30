@@ -92,7 +92,15 @@ function Model()
      */
     this.mobs = [];
 
+	/*
+	 * Callback method after model has been set up
+	 **/
     this.onLevelCallback = undefined;
+    
+    /*
+     * Allowed layers
+     */
+    this.allowedLayers = new Array();
 }
 
 Model.prototype = 
@@ -116,6 +124,8 @@ Model.prototype =
         this.start = lvlData.start;
         this.player = lvlData.start;
         this.goal = lvlData.goal;
+
+		this._setAllowedLayers();
 
         // Create the mobs
         for (var i in lvlData.enemies)
@@ -168,6 +178,20 @@ Model.prototype =
 
         this.ready = true;
     },
+
+	/*
+	 * Setting the allowed layers
+	 */
+
+	"_setAllowedLayers" : function() {
+		this.allowedLayers = [];
+
+		for (var i=0; i<3; i++) {
+			if (this.level[i][this.player[1]][this.player[2]] == 1)
+				this.allowedLayers.push(i);
+
+		}
+	},
 
     /*
      * Restart level by resetting player and mob positions.
@@ -301,12 +325,29 @@ Model.prototype =
         }
 
         // First check within index bounds, then check player standing on tile.
-        return this.player[0] >= 0 && this.player[1] >= 0 && this.player[2] >= 0
+        if (!(this.player[0] >= 0 && this.player[1] >= 0 && this.player[2] >= 0
                 && this.player[0] < this.level.length
                 && this.player[1] < this.level[0].length
-                && this.player[2] < this.level[0][0].length
-                && this.level[this.player[0], this.player[1],
-                        this.player[2]] != 0;
+                && this.player[2] < this.level[0][0].length))
+
+            return false;
+
+        var val = this.level[this.player[0]][this.player[1]][this.player[2]] != 0;
+
+        if (!val) {
+        	for (var i=0; i<this.allowedLayers.length;i++) {
+				if (this.level[this.allowedLayers[i]][this.player[1]][this.player[2]] != 0) {
+					val = true;
+					this.player[0] = i;
+					break;
+				}
+			}
+		}
+		
+		if (val)
+        	this._setAllowedLayers();
+
+        return val;
     },
 
     /*
@@ -321,8 +362,8 @@ Model.prototype =
 
         for (var i in this.mobs)
         {
-            if (this.player[0] == this.mobs[i].getPos()[0]
-                    && this.player[1] == this.mobs[i].getPos()[1]
+            if (this.allowedLayers.indexOf(this.mobs[i].getPos()[0]) >= 0 &&
+                    this.player[1] == this.mobs[i].getPos()[1]
                     && this.player[2] == this.mobs[i].getPos()[2])
             {
                 return true;
@@ -469,7 +510,7 @@ Engine.prototype = {
 				this.drawLayers[i].width = MODEL.level[i][0].length * 64;
 				addLayer = true;
 			} else {
-				//TODO: clear layer
+				this.drawLayers[i].destroyChildren();
 			}
 				
 			for (var y=0; y<MODEL.level[i].length; y++) {
@@ -489,7 +530,7 @@ Engine.prototype = {
 			this.drawLayers[3] = new Kinetic.Layer();
 			this.stage.add(this.drawLayers[3]);
 		} else {
-			//TODO: clear layer
+			this.drawLayers[3].destroyChildren();
 		}
 		this.player = DATA.imgs["player"].clone({
 			x: MODEL.player[2] * 64, y: MODEL.player[1] * 42});
@@ -531,14 +572,10 @@ Engine.prototype = {
 		var aL = MODEL.activeLayers();
 		
 
-		if (this.knownLayers != aL) {
-
-		}
-
 		for (var i=0; i<this.drawLayers.length; i++) {
-			this.drawLayers[i].offsetX(-20);
-			this.drawLayers[i].offsetY(250);
-			this.drawLayers[i].opacity(aL[i] * 0.7 + 0.3);
+			this.drawLayers[i].offsetX(this.player.x() - 200);
+			this.drawLayers[i].offsetY(this.player.y() - 200);
+			this.drawLayers[i].opacity(aL[i] * 0.7 + 0.05);
 		}
 
 		for (var i=0; i<this.drawLayers.length; i++)
@@ -561,13 +598,29 @@ Engine.prototype = {
 		if (DATA.loaded) {
 			if (this.inMenus) {
 
-			} else {
+			} else if (MODEL.ready) {
+
+				if (MODEL.isWinning()) {
+					this.nextLevel();
+				}
+
+				if (!MODEL.isValidPosition()) {
+					console.log("Fell off");
+					MODEL.restart();
+					return;
+				}
+
+				if (MODEL.isCaught()) {
+					console.log("Caught");
+					MODEL.restart();
+					return;
+				}
 
 				if (MODEL.ready) {
 					if (this.ticker % 17 == 0)
 						MODEL.moveMobs();
 
-					if (this.ticker % 19 == 0) {
+					if (this.ticker % 7 == 0) {
 
 						if (this.requestMove == UP)
 							MODEL.up();

@@ -40,10 +40,32 @@ function Model()
 {
     this.DEBUG = true;
 
-	this.ready = false;
+    this.ready = false;
+
+    /*
+     * Three dimensional matrix, [layer][up-to-down][left-to-right],
+     * describing the level paths.
+     */
     this.level = undefined;
+
+    /*
+     * The player start position.
+     */
+    this.start = undefined;
+
+    /*
+     * The current player position.
+     */
     this.player = undefined;
+
+    /*
+     * The goal position.
+     */
     this.goal = undefined;
+
+    /*
+     * A list of mobs patroling the level.
+     */
     this.mobs = [];
 }
 
@@ -60,6 +82,7 @@ Model.prototype =
         }
 
         this.level = lvlData.level;
+        this.start = lvlData.start;
         this.player = lvlData.start;
         this.goal = lvlData.goal;
 
@@ -104,7 +127,101 @@ Model.prototype =
             console.log(this.goal);
             console.log(this.mobs);
         }
+
         this.ready = true;
+    },
+
+    /*
+     * Restart level.
+     */
+    "restart": function()
+    {
+        this.player = this.start;
+
+        for (i in this.mobs)
+        {
+            this.mobs[i].position = 0;
+        }
+    },
+
+    /*
+     * Move player up one layer, regardless of validity.
+     */
+    "ascend": function()
+    {
+        this.player = [this.player[0] + 1, this.player[1], this.player[2]];
+    },
+
+    /*
+     * Move player down one layer, regardless of validity.
+     */
+    "descend": function()
+    {
+        this.player = [this.player[0] - 1, this.player[1], this.player[2]];
+    },
+
+    /*
+     * Move player to the right, regardless of validity.
+     */
+    "right": function()
+    {
+        this.player = [this.player[0], this.player[1], this.player[2] + 1];
+    },
+
+    /*
+     * Move player to the left, regardless of validity.
+     */
+    "left": function()
+    {
+        this.player = [this.player[0], this.player[1], this.player[2] - 1];
+    },
+
+    /*
+     * Move player upwards, regardless of validity.
+     */
+    "up": function()
+    {
+        this.player = [this.player[0], this.player[1] + 1, this.player[2]];
+    },
+
+    /*
+     * Move player downwards, regardless of validity.
+     */
+    "down": function()
+    {
+        this.player = [this.player[0], this.player[1] - 1, this.player[2]];
+    },
+
+    /*
+     * Check if player position is valid.
+     */
+    "isValidPosition": function()
+    {
+        // First check within index bounds, then check player standing on tile.
+        return this.player[0] >= 0 && this.player[1] >= 0 && this.player[2] >= 0
+                && this.player[0] < this.player.length
+                && this.player[1] < this.player[0].length
+                && this.player[2] < this.player[0][0].length
+                && this.level[this.player[0], this.player[1],
+                        this.player[2]] != 0;
+    },
+
+    /*
+     * Check if mob caught player.
+     */
+    "isCaught": function()
+    {
+        for (var i in this.mobs)
+        {
+            if (this.player[0] == this.mobs[i].getPos()[0]
+                    && this.player[1] == this.mobs[i].getPos()[1]
+                    && this.player[2] == this.mobs[i].getPos()[2])
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
 

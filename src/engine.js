@@ -10,7 +10,7 @@ function Model() {
 Model.prototype = {
 
 	"setLevel": function(lvlData) {
-            this.level = lvlData.level;
+            this.player = lvlData.start;
 
 	    console.log(lvlData);
 	}

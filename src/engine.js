@@ -328,6 +328,15 @@ Model.prototype =
     },
 
     /*
+     * The win condition of the level.
+     */
+    "isWinning": function()
+    {
+        return this.player[0] == this.goal[0] && this.player[1] == this.goal[1]
+                this.player[2] == this.goal[2];
+    },
+
+    /*
      * Moves the mobs to their next position on their paths.
      */
     "moveMobs": function()

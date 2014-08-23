@@ -163,7 +163,7 @@ Model.prototype =
     {
         this.player = this.start;
 
-        for (i in this.mobs)
+        for (var i in this.mobs)
         {
             this.mobs[i].position = 0;
         }

@@ -466,6 +466,20 @@ Engine.prototype = {
 				this.stage.add(this.drawLayers[i]);
 		}
 
+		if (!this.movables) {
+			this.movables = new Kinetic.Layer();
+			this.stage.add(this.movables);
+		} else {
+			//TODO: clear layer
+		}
+		this.movables.add(DATA.imgs["player"].clone({
+			x: MODEL.player[2] * 64, y: MODEL.player[1] * 42}));
+		for (var i=0; i < MODEL.mobs.length; i++) {
+			var mPos = MODEL.mobs[i].getPos();
+			this.movables.add(DATA.imgs["mob"].clone({
+				x: mPos[2]*64, y: mPos[1] * 42}));
+			};
+		
 	},
 
 	"drawLoading": function() {
@@ -501,7 +515,10 @@ Engine.prototype = {
 			if (this.inMenus) {
 
 			} else {
+
 				if (MODEL.ready) {
+					MODEL.moveMobs();
+
 					this.offsetY = (MODEL.height - MODEL.player[1]) * 42 - 200;
 					this.offsetX = (MODEL.width - MODEL.player[0]) * 64 - 200;
 					var aL = MODEL.activeLayers();
@@ -510,8 +527,8 @@ Engine.prototype = {
 
 					}
 					for (var i=0; i<this.drawLayers.length; i++) {
-						//this.drawLayers[i].offsetX(this.offsetX);
-						//this.drawLayers[i].offsetY(this.offsetY);
+						this.drawLayers[i].offsetX(-20);
+						this.drawLayers[i].offsetY(250);
 						this.drawLayers[i].opacity(aL[i] * 0.7 + 0.3);
 					}
 					
@@ -534,9 +551,11 @@ Engine.prototype = {
 
 		this.loadImages([
 				//DATA-key, src, width, heigh
-				[0, "img/c0.png", 64, 42],
-				[1, "img/c1.png", 64, 42],
-				[2, "img/c2.png", 64, 42]]);
+				[0, "img/c0.png"],
+				[1, "img/c1.png"],
+				[2, "img/c2.png"],
+				["player", "img/player.png"],
+				["mob", "img/mob.png"]]);
 		
 		//TODO: A hack to load first level
 		var f1 = $.proxy(this, "nextLevel");

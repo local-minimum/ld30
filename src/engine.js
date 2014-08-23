@@ -504,13 +504,15 @@ Engine.prototype = {
 				if (MODEL.ready) {
 					this.offsetY = (MODEL.height - MODEL.player[1]) * 42 - 200;
 					this.offsetX = (MODEL.width - MODEL.player[0]) * 64 - 200;
+					var aL = MODEL.activeLayers();
 					
 					if (this.knownLayers != MODEL.activeLayers) {
 
 					}
-					for (int i=0; i<this.drawLayers.length, i++) {
-						this.drawLayers[i].offsetX(this.offsetX);
-						this.drawLayers[i].offsetY(this.offsetY);
+					for (var i=0; i<this.drawLayers.length; i++) {
+						//this.drawLayers[i].offsetX(this.offsetX);
+						//this.drawLayers[i].offsetY(this.offsetY);
+						this.drawLayers[i].opacity(aL[i] * 0.7 + 0.3);
 					}
 					
 				}

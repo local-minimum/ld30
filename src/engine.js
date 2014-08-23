@@ -40,6 +40,7 @@ function Model()
 {
     this.DEBUG = true;
 
+	this.ready = false;
     this.level = undefined;
     this.player = undefined;
     this.goal = undefined;
@@ -103,6 +104,7 @@ Model.prototype =
             console.log(this.goal);
             console.log(this.mobs);
         }
+        this.ready = true;
     }
 }
 
@@ -146,6 +148,7 @@ function Engine() {
 Engine.prototype = {
 	
 	"loadLevel": function(lvl) {
+		MODEL.ready = false;
 		$.getJSON("data/lvl" + lvl + ".json", function(response) {
 			MODEL.setLevel(response);
 		}).error(function() { alert("Could not load level " + lvl); });
@@ -188,12 +191,15 @@ Engine.prototype = {
 	},
 
 	"drawLevel": function() {
+		if (!MODEL.ready)
+			return;
+
 		for (var i=0; i<MODEL.level.length; i++) {
 			for (var y=0; y<MODEL.level[i].length; y++) {
 				for (var x=0; x<MODEL.level[i][y].length; x++) {
 					if (MODEL.level[i][y][x] == 1) {
 						this.ctx.drawImage(
-							DATA.tile[i], x * 64 + 10,  y * 42 + 10);
+							DATA.tiles[i], x * 64 + 10,  y * 42 + 10);
 					}
 				}
 			}

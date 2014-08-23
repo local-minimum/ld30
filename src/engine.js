@@ -2,7 +2,7 @@
 
 function Mob()
 {
-    this.DEBUG = true;
+    this.DEBUG = false;
 
     /*
      * Path of the patroling mob.
@@ -57,7 +57,7 @@ Mob.prototype =
 
 function Model()
 {
-    this.DEBUG = true;
+    this.DEBUG = false;
 
     this.ready = false;
 
@@ -401,8 +401,11 @@ function Engine() {
 	this.knownActiveLayers = undefined;
 	this.offsetX;
 	this.offsetY;
+	this.player = undefined;
+	this.mobs = undefined;
 	this.drawLayers = new Array();
 	this.stage = undefined;
+	this.ticker = 0;
 }
 
 Engine.prototype = {
@@ -475,18 +478,22 @@ Engine.prototype = {
 				this.stage.add(this.drawLayers[i]);
 		}
 
-		if (!this.movables) {
-			this.movables = new Kinetic.Layer();
-			this.stage.add(this.movables);
+		if (this.drawLayers.length < 4) {
+			this.drawLayers[3] = new Kinetic.Layer();
+			this.stage.add(this.drawLayers[3]);
 		} else {
 			//TODO: clear layer
 		}
-		this.movables.add(DATA.imgs["player"].clone({
-			x: MODEL.player[2] * 64, y: MODEL.player[1] * 42}));
+		this.player = DATA.imgs["player"].clone({
+			x: MODEL.player[2] * 64, y: MODEL.player[1] * 42});
+		this.drawLayers[3].add(this.player);
+
+		this.mobs = new Array();
 		for (var i=0; i < MODEL.mobs.length; i++) {
 			var mPos = MODEL.mobs[i].getPos();
-			this.movables.add(DATA.imgs["mob"].clone({
-				x: mPos[2]*64, y: mPos[1] * 42}));
+			this.mobs[i] = DATA.imgs["mob"].clone({
+				x: mPos[2]*64, y: mPos[1] * 42});
+			this.drawLayers[3].add(this.mobs[i]);
 			};
 		
 	},
@@ -502,6 +509,30 @@ Engine.prototype = {
 	"drawLevel": function() {
 		if (!MODEL.ready)
 			return;
+
+		this.player.x(MODEL.player[2] * 64 + 2);
+		this.player.y(MODEL.player[1] * 42 - 10);
+
+		for (var i=0; i<MODEL.mobs.length; i++) {
+			var mobP = MODEL.mobs[i].getPos();
+			this.mobs[i].x(mobP[2] * 64 + 5);
+			this.mobs[i].y(mobP[1] * 42 - 10);
+		}
+
+		this.offsetY = (MODEL.height - MODEL.player[1]) * 42 - 200;
+		this.offsetX = (MODEL.width - MODEL.player[0]) * 64 - 200;
+		var aL = MODEL.activeLayers();
+		
+
+		if (this.knownLayers != aL) {
+
+		}
+
+		for (var i=0; i<this.drawLayers.length; i++) {
+			this.drawLayers[i].offsetX(-20);
+			this.drawLayers[i].offsetY(250);
+			this.drawLayers[i].opacity(aL[i] * 0.7 + 0.3);
+		}
 
 		for (var i=0; i<this.drawLayers.length; i++)
 			this.drawLayers[i].draw()
@@ -526,26 +557,17 @@ Engine.prototype = {
 			} else {
 
 				if (MODEL.ready) {
-					MODEL.moveMobs();
+					if (this.ticker % 16 == 0)
+						MODEL.moveMobs();
 
-					this.offsetY = (MODEL.height - MODEL.player[1]) * 42 - 200;
-					this.offsetX = (MODEL.width - MODEL.player[0]) * 64 - 200;
-					var aL = MODEL.activeLayers();
-					
-					if (this.knownLayers != MODEL.activeLayers) {
-
-					}
-					for (var i=0; i<this.drawLayers.length; i++) {
-						this.drawLayers[i].offsetX(-20);
-						this.drawLayers[i].offsetY(250);
-						this.drawLayers[i].opacity(aL[i] * 0.7 + 0.3);
-					}
 					
 				}
 			}
 		} else {
 			
 		}
+
+		this.ticker++;
 	},
 
 	"start" : function() {

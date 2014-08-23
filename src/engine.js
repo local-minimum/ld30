@@ -123,7 +123,7 @@ var DATA = {
 	"_loaded" : false,
 	"_parts": 0,
 	"_total": 3,
-	"tiles" : new Array(),
+	"imgs" : new Array(),
 
 };
 
@@ -146,8 +146,11 @@ function Engine() {
 	this.curLevel = 0;	
 	this.maxLevel = 1;
 	this.inMenus = false;
-	this.canvas = document.getElementById('game');
-	this.ctx = this.canvas.getContext('2d');
+	this.knownActiveLayers = undefined;
+	this.offsetX;
+	this.offsetY;
+	this.drawLayers = new Array();
+	this.stage = undefined;
 }
 
 Engine.prototype = {
@@ -175,16 +178,16 @@ Engine.prototype = {
 
 	"loadImages" : function(imageArray) {
 		for (var i=0; i<imageArray.length; i++) {
-			$('<img>', {src: imageArray[i]})
-				.load(function() {
-					var fname = this.src.substring(this.src.lastIndexOf('/')+1);
-					if (fname[0] == "c") {
-						DATA.tiles[parseInt(fname.replace(/^\D+/g, ''))] = this;
-					}
-					DATA._parts++;
-				}).error(function() { 
-					alert("Could not load image " + this.src);
-				});
+			var imageObj = new Image();
+			imageObj.onload = function() {
+				DATA._parts++;
+			}
+			DATA.imgs[imageArray[i][0]] = new Kinetic.Image( {
+				x: 0,
+				y: 0,
+				image: imageObj,
+				draggable: false});
+			imageObj.src = imageArray[i][1]
 
 		}
 	},
@@ -196,20 +199,34 @@ Engine.prototype = {
 		}
 
 		for (var i=0; i<MODEL.level.length; i++) {
+			var addLayer = false;
+			if (this.drawLayers.length <= i) {
+				this.drawLayers[i] = new Kinetic.Layer();
+				this.drawLayers[i].clearBeforeDraw = false;
+				this.drawLayers[i].height = MODEL.level[i].length * 42;
+				this.drawLayers[i].width = MODEL.level[i][0].length * 64;
+				addLayer = true;
+			} else {
+				//TODO: clear layer
+			}
+				
 			for (var y=0; y<MODEL.level[i].length; y++) {
 				for (var x=0; x<MODEL.level[i][y].length; x++) {
 					if (MODEL.level[i][y][x] == 1) {
-						this.ctx.drawImage(
-							DATA.tiles[i], x * 64 + 10,  y * 42 + 10);
+						this.drawLayers[i].add(DATA.imgs[i].clone({
+							x: x*64, y:y*42}));
 					}
 				}
 			}
+
+			if (addLayer)
+				this.stage.add(this.drawLayers[i]);
 		}
 
 	},
 
 	"drawLoading": function() {
-		this.ctx.fillRect(10, 10, 300 * DATA.loading(), 30);
+		//this.ctx.fillRect(10, 10, 300 * DATA.loading(), 30);
 	},
 
 	"drawMenu": function() {
@@ -220,6 +237,8 @@ Engine.prototype = {
 		if (!MODEL.ready)
 			return;
 
+		for (var i=0; i<this.drawLayers.length; i++)
+			this.drawLayers[i].draw()
 	},
 
 	"draw" : function() {
@@ -234,12 +253,55 @@ Engine.prototype = {
 		}
 	},
 
+	"update": function() {
+		if (DATA.loaded) {
+			if (this.inMenus) {
+
+			} else {
+				if (MODEL.ready) {
+					this.offsetY = (MODEL.height - MODEL.player[1]) * 42 - 200;
+					this.offsetX = (MODEL.width - MODEL.player[0]) * 64 - 200;
+					
+					if (this.knownLayers != MODEL.activeLayers) {
+
+					}
+					for (int i=0; i<this.drawLayers.length, i++) {
+						this.drawLayers[i].offsetX(this.offsetX);
+						this.drawLayers[i].offsetY(this.offsetY);
+					}
+					
+				}
+			}
+		} else {
+			
+		}
+	},
+
 	"start" : function() {
-		this.loadImages(["img/c0.png", "img/c1.png", "img/c2.png"]);
+		this.stage = new Kinetic.Stage({
+			container: 'game',
+			width: 400,
+			height: 400
+		});
+
+		var staticLayer = new Kinetic.Layer();
+		this.stage.add(staticLayer);
+
+		this.loadImages([
+				//DATA-key, src, width, heigh
+				[0, "img/c0.png", 64, 42],
+				[1, "img/c1.png", 64, 42],
+				[2, "img/c2.png", 64, 42]]);
+		
+		//TODO: A hack to load first level
 		var f1 = $.proxy(this, "nextLevel");
 		setTimeout(f1, 200)
+
+		//Setting up callbacks
 		var f = $.proxy(this, "draw");
 		window.setInterval(f, 31);
+		var f2 = $.proxy(this, "update");
+		window.setInterval(f2, 31);
 
 	}
 }

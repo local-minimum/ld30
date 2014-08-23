@@ -17,6 +17,11 @@ Model.prototype = {
 }
 
 var MODEL = new Model();
+
+/*
+ * RESOURCES TO BE LOADED
+ */
+
 var DATA = {
 	"_loaded" : false,
 	"_parts": 0,
@@ -35,6 +40,10 @@ DATA.loaded = function() {
 DATA.loading = function() {
 	return DATA._parts / DATA._total;
 }
+
+/*
+ * ENGINE
+ */
 
 function Engine() {
 	this.curLevel = -1;	
@@ -81,18 +90,45 @@ Engine.prototype = {
 	},
 
 	"drawLoading": function() {
-		ctx.fillRect(10, 10, 300 * DATA.loading, 30);
+		this.ctx.fillRect(10, 10, 300 * DATA.loading(), 30);
+	},
+
+	"drawMenu": function() {
+
+	},
+
+	"drawLevel": function() {
+		for (var i=0; i<MODEL.level.length; i++) {
+			for (var y=0; y<MODEL.level[i].length; y++) {
+				for (var x=0; x<MODEL.level[i][y].length; x++) {
+					if (MODEL.level[i][y][x] == 1) {
+						this.ctx.drawImage(
+							DATA.tile[i], x * 64 + 10,  y * 42 + 10);
+					}
+				}
+			}
+		}
+
 	},
 
 	"draw" : function() {
 		if (DATA.loaded) {
-
+			if (this.inMenus)
+				this.drawMenu();
+			else
+				this.drawLevel();
 
 		} else {
 			this.drawLoading();
 		}
-	}
+	},
 
+	"start" : function() {
+		this.loadImages(["img/c0.png", "img/c1.png", "img/c2.png"]);
+		this.loadLevel(1);
+		this.draw();
+
+	}
 }
 
 $.ajaxSetup({beforeSend: function(xhr){
@@ -104,5 +140,4 @@ $.ajaxSetup({beforeSend: function(xhr){
 });
 
 var e = new Engine();
-e.loadImages(["img/c1.png", "img/c2.png", "img/c3.png"]);
-e.loadLevel(1);
+e.start();

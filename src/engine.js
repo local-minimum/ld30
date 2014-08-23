@@ -253,6 +253,8 @@ Model.prototype =
     "right": function()
     {
         this.player = [this.player[0], this.player[1], this.player[2] + 1];
+        if (!this.isValidPosition()) 
+        	this.player = [this.player[0], this.player[1], this.player[2] - 1];
 
         if (this.DEBUG)
         {
@@ -269,6 +271,8 @@ Model.prototype =
     "left": function()
     {
         this.player = [this.player[0], this.player[1], this.player[2] - 1];
+        if (!this.isValidPosition()) 
+        	this.player = [this.player[0], this.player[1], this.player[2] + 1];
 
         if (this.DEBUG)
         {
@@ -285,6 +289,8 @@ Model.prototype =
     "up": function()
     {
         this.player = [this.player[0], this.player[1] - 1, this.player[2]];
+        if (!this.isValidPosition()) 
+        	this.player = [this.player[0], this.player[1] + 1, this.player[2]];
 
         if (this.DEBUG)
         {
@@ -301,6 +307,8 @@ Model.prototype =
     "down": function()
     {
         this.player = [this.player[0], this.player[1] + 1, this.player[2]];
+        if (!this.isValidPosition()) 
+        	this.player = [this.player[0], this.player[1] - 1, this.player[2]];
 
         if (this.DEBUG)
         {
@@ -328,9 +336,10 @@ Model.prototype =
         if (!(this.player[0] >= 0 && this.player[1] >= 0 && this.player[2] >= 0
                 && this.player[0] < this.level.length
                 && this.player[1] < this.level[0].length
-                && this.player[2] < this.level[0][0].length))
+                && this.player[2] < this.level[0][0].length)) {
 
             return false;
+		}
 
         var val = this.level[this.player[0]][this.player[1]][this.player[2]] != 0;
 
@@ -343,7 +352,7 @@ Model.prototype =
 				}
 			}
 		}
-		
+
 		if (val)
         	this._setAllowedLayers();
 
@@ -378,7 +387,7 @@ Model.prototype =
      */
     "isWinning": function()
     {
-        return this.player[0] == this.goal[0] && this.player[1] == this.goal[1]
+        return this.player[0] == this.goal[0] && this.player[1] == this.goal[1] &&
                 this.player[2] == this.goal[2];
     },
 
@@ -601,6 +610,7 @@ Engine.prototype = {
 			} else if (MODEL.ready) {
 
 				if (MODEL.isWinning()) {
+					console.log("Won");
 					this.nextLevel();
 				}
 

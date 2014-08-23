@@ -38,12 +38,13 @@ Mob.prototype =
 
 function Model()
 {
-    this.DEBUG = true;
+    this.DEBUG = false;
 
 	this.ready = false;
     this.level = undefined;
     this.player = undefined;
     this.goal = undefined;
+    this.onLevelCallback = undefined;
     this.mobs = [];
 }
 
@@ -104,6 +105,10 @@ Model.prototype =
             console.log(this.goal);
             console.log(this.mobs);
         }
+
+		if (this.onLevelCallback)
+			this.onLevelCallback();
+
         this.ready = true;
     }
 }
@@ -138,7 +143,7 @@ DATA.loading = function() {
  */
 
 function Engine() {
-	this.curLevel = -1;	
+	this.curLevel = 0;	
 	this.maxLevel = 1;
 	this.inMenus = false;
 	this.canvas = document.getElementById('game');
@@ -149,6 +154,7 @@ Engine.prototype = {
 	
 	"loadLevel": function(lvl) {
 		MODEL.ready = false;
+		MODEL.onLevelCallback = $.proxy(this, "initLevel");
 		$.getJSON("data/lvl" + lvl + ".json", function(response) {
 			MODEL.setLevel(response);
 		}).error(function() { alert("Could not load level " + lvl); });
@@ -156,6 +162,7 @@ Engine.prototype = {
 	},
 
 	"showMenu": function() {
+		this.inMenus = true;
 
 	},
 
@@ -182,17 +189,11 @@ Engine.prototype = {
 		}
 	},
 
-	"drawLoading": function() {
-		this.ctx.fillRect(10, 10, 300 * DATA.loading(), 30);
-	},
+	"initLevel" : function() {
 
-	"drawMenu": function() {
-
-	},
-
-	"drawLevel": function() {
-		if (!MODEL.ready)
+		if (!DATA.loaded) {
 			return;
+		}
 
 		for (var i=0; i<MODEL.level.length; i++) {
 			for (var y=0; y<MODEL.level[i].length; y++) {
@@ -204,6 +205,20 @@ Engine.prototype = {
 				}
 			}
 		}
+
+	},
+
+	"drawLoading": function() {
+		this.ctx.fillRect(10, 10, 300 * DATA.loading(), 30);
+	},
+
+	"drawMenu": function() {
+
+	},
+
+	"drawLevel": function() {
+		if (!MODEL.ready)
+			return;
 
 	},
 
@@ -221,8 +236,10 @@ Engine.prototype = {
 
 	"start" : function() {
 		this.loadImages(["img/c0.png", "img/c1.png", "img/c2.png"]);
-		this.loadLevel(1);
-		this.draw();
+		var f1 = $.proxy(this, "nextLevel");
+		setTimeout(f1, 200)
+		var f = $.proxy(this, "draw");
+		window.setInterval(f, 31);
 
 	}
 }

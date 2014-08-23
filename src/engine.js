@@ -11,6 +11,8 @@ Model.prototype = {
 
 	"setLevel": function(lvlData) {
             this.level = lvlData.level;
+
+	    console.log(lvlData);
 	}
 }
 
@@ -34,6 +36,14 @@ Engine.prototype = {
 	}
 
 }
+
+$.ajaxSetup({beforeSend: function(xhr){
+  if (xhr.overrideMimeType)
+  {
+    xhr.overrideMimeType("application/json");
+  }
+}
+});
 
 var e = new Engine();
 e.loadLevel(1);

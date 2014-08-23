@@ -4,7 +4,14 @@ function Mob()
 {
     this.DEBUG = true;
 
+    /*
+     * Path of the patroling mob.
+     */
     this.path = undefined;
+
+    /*
+     * Position in the path.
+     */
     this.position = 0;
 }
 
@@ -14,7 +21,10 @@ Mob.prototype =
     {
         if (this.DEBUG)
         {
-            console.log("get postion");
+            console.log("Get mob position");
+            console.log(this.path[this.position][0]);
+            console.log(this.path[this.position][1]);
+            console.log(this.path[this.position][2]);
         }
 
         return this.path[this.position];
@@ -22,16 +32,19 @@ Mob.prototype =
 
     "move": function()
     {
-        if (this.DEBUG)
-        {
-            console.log("move mob");
-        }
-
         this.position++;
 
         if (this.position == this.path.length)
         {
             this.position = 0;
+        }
+
+        if (this.DEBUG)
+        {
+            console.log("Move mob to next position on path");
+            console.log(this.path[this.position][0]);
+            console.log(this.path[this.position][1]);
+            console.log(this.path[this.position][2]);
         }
     }
 }
@@ -81,6 +94,11 @@ Model.prototype =
         if (!lvlData)
         {
             console.log("lvlData object is false in Model setLevel");
+        }
+
+        if (this.DEBUG)
+        {
+	    console.log("Setting up new level");
         }
 
         this.level = lvlData.level;
@@ -149,6 +167,15 @@ Model.prototype =
         {
             this.mobs[i].position = 0;
         }
+
+        if (this.DEBUG)
+        {
+	    console.log("Restarting level");
+            console.log(this.level);
+            console.log(this.player);
+            console.log(this.goal);
+            console.log(this.mobs);
+        }
     },
 
     /*
@@ -157,6 +184,14 @@ Model.prototype =
     "ascend": function()
     {
         this.player = [this.player[0] + 1, this.player[1], this.player[2]];
+
+        if (this.DEBUG)
+        {
+	    console.log("Moving player up one layer");
+            console.log(this.player[0]);
+            console.log(this.player[1]);
+            console.log(this.player[2]);
+        }
     },
 
     /*
@@ -165,6 +200,14 @@ Model.prototype =
     "descend": function()
     {
         this.player = [this.player[0] - 1, this.player[1], this.player[2]];
+
+        if (this.DEBUG)
+        {
+	    console.log("Moving player down one layer");
+            console.log(this.player[0]);
+            console.log(this.player[1]);
+            console.log(this.player[2]);
+        }
     },
 
     /*
@@ -173,6 +216,14 @@ Model.prototype =
     "right": function()
     {
         this.player = [this.player[0], this.player[1], this.player[2] + 1];
+
+        if (this.DEBUG)
+        {
+	    console.log("Moving player to the right");
+            console.log(this.player[0]);
+            console.log(this.player[1]);
+            console.log(this.player[2]);
+        }
     },
 
     /*
@@ -181,6 +232,14 @@ Model.prototype =
     "left": function()
     {
         this.player = [this.player[0], this.player[1], this.player[2] - 1];
+
+        if (this.DEBUG)
+        {
+	    console.log("Moving player to the left");
+            console.log(this.player[0]);
+            console.log(this.player[1]);
+            console.log(this.player[2]);
+        }
     },
 
     /*
@@ -189,6 +248,14 @@ Model.prototype =
     "up": function()
     {
         this.player = [this.player[0], this.player[1] + 1, this.player[2]];
+
+        if (this.DEBUG)
+        {
+	    console.log("Moving player upwards");
+            console.log(this.player[0]);
+            console.log(this.player[1]);
+            console.log(this.player[2]);
+        }
     },
 
     /*
@@ -197,6 +264,14 @@ Model.prototype =
     "down": function()
     {
         this.player = [this.player[0], this.player[1] - 1, this.player[2]];
+
+        if (this.DEBUG)
+        {
+	    console.log("Moving player downwards");
+            console.log(this.player[0]);
+            console.log(this.player[1]);
+            console.log(this.player[2]);
+        }
     },
 
     /*
@@ -204,6 +279,14 @@ Model.prototype =
      */
     "isValidPosition": function()
     {
+        if (this.DEBUG)
+        {
+	    console.log("Checking if player position is valid");
+            console.log(this.player[0]);
+            console.log(this.player[1]);
+            console.log(this.player[2]);
+        }
+
         // First check within index bounds, then check player standing on tile.
         return this.player[0] >= 0 && this.player[1] >= 0 && this.player[2] >= 0
                 && this.player[0] < this.player.length
@@ -218,6 +301,11 @@ Model.prototype =
      */
     "isCaught": function()
     {
+        if (this.DEBUG)
+        {
+            console.log("Checking if player is caught");
+        }
+
         for (var i in this.mobs)
         {
             if (this.player[0] == this.mobs[i].getPos()[0]

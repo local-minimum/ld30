@@ -17,6 +17,9 @@ function Mob()
 
 Mob.prototype = 
 {
+    /*
+     * Get the current position of the mob.
+     */
     "getPos": function()
     {
         if (this.DEBUG)
@@ -30,6 +33,9 @@ Mob.prototype =
         return this.path[this.position];
     },
 
+    /*
+     * Move mob to next position in the path.
+     */
     "move": function()
     {
         this.position++;
@@ -51,7 +57,7 @@ Mob.prototype =
 
 function Model()
 {
-    this.DEBUG = false;
+    this.DEBUG = true;
 
     this.ready = false;
 
@@ -141,6 +147,7 @@ Model.prototype =
 
         if (this.DEBUG)
         {
+      	    console.log("Level data");
 	    console.log(lvlData);
             console.log(this.level);
             console.log(this.player);
@@ -157,7 +164,7 @@ Model.prototype =
     },
 
     /*
-     * Restart level.
+     * Restart level by resetting player and mob positions.
      */
     "restart": function()
     {
@@ -289,9 +296,9 @@ Model.prototype =
 
         // First check within index bounds, then check player standing on tile.
         return this.player[0] >= 0 && this.player[1] >= 0 && this.player[2] >= 0
-                && this.player[0] < this.player.length
-                && this.player[1] < this.player[0].length
-                && this.player[2] < this.player[0][0].length
+                && this.player[0] < this.level.length
+                && this.player[1] < this.level[0].length
+                && this.player[2] < this.level[0][0].length
                 && this.level[this.player[0], this.player[1],
                         this.player[2]] != 0;
     },

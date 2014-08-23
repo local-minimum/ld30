@@ -260,7 +260,7 @@ Model.prototype =
      */
     "up": function()
     {
-        this.player = [this.player[0], this.player[1] + 1, this.player[2]];
+        this.player = [this.player[0], this.player[1] - 1, this.player[2]];
 
         if (this.DEBUG)
         {
@@ -276,7 +276,7 @@ Model.prototype =
      */
     "down": function()
     {
-        this.player = [this.player[0], this.player[1] - 1, this.player[2]];
+        this.player = [this.player[0], this.player[1] + 1, this.player[2]];
 
         if (this.DEBUG)
         {

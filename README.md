@@ -12,8 +12,6 @@ bring them all together again.
 TODO
 ----
 
-* CODE: Effect when death
-* CODE: Effect when goal
 * CODE: Loading game screen
 
 DONE
@@ -38,3 +36,5 @@ DONE
 * CODE: Scroll between positions
 * CODE: Make timer start when first keypress
 * CODE: Level progression and return to menu when done
+* CODE: Effect when death
+* CODE: Effect when goal

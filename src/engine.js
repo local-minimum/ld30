@@ -121,6 +121,12 @@ function Model()
     this._coins = undefined;
     this.coins = undefined;
 
+    /*
+     * Player start rotation
+     * */
+
+    this.startRotation = undefined;
+
 }
 
 Model.prototype = 
@@ -144,6 +150,7 @@ Model.prototype =
         this.start = lvlData.start;
         this.player = lvlData.start;
         this.goal = lvlData.goal;
+        this.startRotation = lvlData.startRotation;
 
         this._setAllowedLayers();
         
@@ -234,6 +241,7 @@ Model.prototype =
         this._coins[this.player[1]][this.player[2]] = t;
         this._coins[this.goal[1]][this.goal[2]] = t;
         this.coins[this.player[1]][this.player[2]] = 0;
+        this.coins[this.goal[1]][this.goal[2]] = 0;
         for (var y=0;y<this.coins.length;y++) {
             for (var x=0; x<this.coins[0].length;x++) {
                 if (this.coins[y][x] < 1) {
@@ -278,6 +286,7 @@ Model.prototype =
         this._coins[this.player[1]][this.player[2]] = t;
         this._coins[this.goal[1]][this.goal[2]] = t;
         this.coins[this.player[1]][this.player[2]] = 0;
+        this.coins[this.goal[1]][this.goal[2]] = 0;
 
         if (this.DEBUG)
         {
@@ -528,7 +537,25 @@ function Engine() {
     this.MOVABLES = 4;
     this.COINS = 3;
     this.UI = undefined;
-
+    this.playerRotations = {
+        UP: {
+            rotation: 0,
+            x: 20,
+            y: 0},
+        RIGHT: {
+            rotation: 70,
+            x: 40,
+            y: -0},
+        DOWN: {
+            rotation: 180,
+            x: 44,
+            y: -30},
+        LEFT: {
+            rotation: 250,
+            x: 15,
+            y: -34}
+    };
+    this.playerOff = this.playerRotations.UP;
     this.curLevel = 0;    
     this.maxLevel = 10;
     this.inMenus = false;
@@ -623,6 +650,19 @@ Engine.prototype = {
 
     "reset": function() {
         this.curCoins = MODEL.startCoins;
+
+        if (MODEL.startRotation == "UP")
+            this.playerOff = this.playerRotations.UP;
+        else if (MODEL.startRotation == "RIGHT")
+            this.playerOff = this.playerRotations.RIGHT;
+        else if (MODEL.startRotation == "DOWN")
+            this.playerOff = this.playerRotations.DOWN;
+        else if (MODEL.startRotation == "LEFT")
+            this.playerOff = this.playerRotations.LEFT;
+        this.player.x(MODEL.player[2] * 64 + this.playerOff.x);
+        this.player.y(MODEL.player[1] * 42 - this.playerOff.y);
+        this.offsetX = this.player.x() + this.playerOff.x - 200;
+        this.offsetY = this.player.y() + this.playerOff.y - 200;
     },
 
     "initLevel" : function() {
@@ -631,7 +671,6 @@ Engine.prototype = {
             return;
         }
 
-        this.reset();
         for (var i=0; i<MODEL.level.length; i++) {
             var addLayer = false;
             if (this.drawLayers.length <= i) {
@@ -669,7 +708,7 @@ Engine.prototype = {
             this.coins.push([]);
             for (var x=0; x<MODEL.coins[0].length; x++) {
                 this.coins[y].push(DATA.imgs["coin"].clone({
-                    x: x * 64 + 20, y: y * 42 + 4}));
+                    x: x * 64 + 26, y: y * 42 + 12}));
                 this.drawLayers[this.COINS].add(this.coins[y][x]);
                 this.coins[y][x].visible(MODEL.coins[y][x] == 1);
             }
@@ -694,7 +733,7 @@ Engine.prototype = {
         this.player = DATA.imgs["player"].clone({
             x: MODEL.player[2] * 64, y: MODEL.player[1] * 42});
         this.drawLayers[this.MOVABLES].add(this.player);
-
+        this.player.start();
         this.mobs = new Array();
         for (var i=0; i < MODEL.mobs.length; i++) {
             var mPos = MODEL.mobs[i].getPos();
@@ -729,6 +768,7 @@ Engine.prototype = {
 
         DATA.snds['level'].play();
 
+        this.reset();
         this.levelStartTime = Date.now();
     },
 
@@ -744,8 +784,8 @@ Engine.prototype = {
         if (!MODEL.ready)
             return;
 
-        this.player.x(MODEL.player[2] * 64 + 2);
-        this.player.y(MODEL.player[1] * 42 - 10);
+        this.player.x(MODEL.player[2] * 64 + this.playerOff.x);
+        this.player.y(MODEL.player[1] * 42 - this.playerOff.y);
 
         for (var i=0; i<MODEL.mobs.length; i++) {
             var mobP = MODEL.mobs[i].getPos();
@@ -758,8 +798,6 @@ Engine.prototype = {
         else
             this.lvlGoal.y(MODEL.goal[1] * 42 - 10 - this.ticker % 10);
 
-        this.offsetY = (MODEL.height - MODEL.player[1]) * 42 - 200;
-        this.offsetX = (MODEL.width - MODEL.player[0]) * 64 - 200;
         var aL = MODEL.activeLayers();
         
         for (var y=0; y<MODEL.coins.length; y++) {
@@ -769,8 +807,8 @@ Engine.prototype = {
         }
 
         for (var i=0; i<this.drawLayers.length; i++) {
-            this.drawLayers[i].offsetX(this.player.x() - 200);
-            this.drawLayers[i].offsetY(this.player.y() - 200);
+            this.drawLayers[i].offsetX(this.offsetX); 
+            this.drawLayers[i].offsetY(this.offsetY); 
             this.drawLayers[i].opacity(aL[i] * 0.7 + 0.05);
         }
 
@@ -837,20 +875,32 @@ Engine.prototype = {
                     if (this.ticker % 17 == 0)
                         MODEL.moveMobs();
 
-                    if (this.ticker % 7 == 0) {
+                    if (this.ticker % 3 == 0) {
 
-                        if (this.requestMove == UP)
+                        if (this.requestMove == UP) {
+                            this.playerOff = this.playerRotations.UP;
                             MODEL.up();
-                        else if (this.requestMove == DOWN)
+                        } else if (this.requestMove == DOWN) {
+                            this.playerOff = this.playerRotations.DOWN;
                             MODEL.down();
-                        else if (this.requestMove == LEFT)
+                        } else if (this.requestMove == LEFT) {
+                            this.playerOff = this.playerRotations.LEFT;
                             MODEL.left();
-                        else if (this.requestMove == RIGHT)
+                        } else if (this.requestMove == RIGHT) {
+                            this.playerOff = this.playerRotations.RIGHT;
                             MODEL.right();
-                        
-                        if (MODEL.coinAtPlayer()) {
-                            DATA.snds["coin"].play();
-                            this.curCoins ++;
+                        }
+
+                        if (this.requestMove) {
+
+                            this.offsetX = this.player.x() + this.playerOff.x - 200;
+                            this.offsetY = this.player.y() + this.playerOff.y - 200;
+                            this.player.rotation(this.playerOff.rotation);
+
+                            if (MODEL.coinAtPlayer()) {
+                                DATA.snds["coin"].play();
+                                this.curCoins ++;
+                            }
                         }
 
                         MODEL.setCoinsStatus(this.coinDelta);
@@ -881,7 +931,15 @@ Engine.prototype = {
                 [0, "img/c0.png"],
                 [1, "img/c1.png"],
                 [2, "img/c2.png"],
-                ["player", "img/player.png"],
+                ["player", "img/player.png", {animations: {
+                    standing: [
+                        0, 0, 23, 29,
+                        24, 0, 23, 29],
+                    flying : [
+                        48, 0, 26, 34]},
+                    frameRate: 2,
+                    animation: 'standing'
+                }],
                 ["goal", "img/goal.png"],
                 ["mob", "img/mob.png", {animations: {
                     standing: [
@@ -889,7 +947,6 @@ Engine.prototype = {
                         27, 0, 32, 31,
                         60, 0, 26, 31
                     ]},
-                    frameRate: 7,
                     animation: 'standing'
                     }],
                 ["coin", "img/coin.png"]]);

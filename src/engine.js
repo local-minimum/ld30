@@ -567,7 +567,7 @@ function Engine() {
     };
     this.playerOff = this.playerRotations.UP;
     this.curLevel = 0;    
-    this.maxLevel = 10;
+    this.maxLevel = 6;
     this.inMenus = true;
     this.knownActiveLayers = undefined;
     this.offsetX;
@@ -591,6 +591,7 @@ function Engine() {
     this.menuLayer = undefined;
     this.menuBeetle = undefined;
     this.menuStart = true;
+    this.allowInput = true;
 }
 
 Engine.prototype = {
@@ -965,7 +966,7 @@ Engine.prototype = {
 
                 this.requestMove = undefined;
 
-            } else if (MODEL.ready) {
+            } else if (MODEL.ready && this.allowInput) {
 
                 if (MODEL.ready) {
                     if (this.playing && this.ticker % 11 == 0)

@@ -1,7 +1,7 @@
 "use strict";
 
 if (!Date.now) {
-	    Date.now = function() { return new Date().getTime(); };
+        Date.now = function() { return new Date().getTime(); };
 }
 
 $.ajaxSetup({beforeSend: function(xhr){
@@ -104,9 +104,9 @@ function Model()
      */
     this.mobs = [];
 
-	/*
-	 * Callback method after model has been set up
-	 **/
+    /*
+     * Callback method after model has been set up
+     **/
     this.onLevelCallback = undefined;
     
     /*
@@ -137,7 +137,7 @@ Model.prototype =
 
         if (this.DEBUG)
         {
-	    console.log("Setting up new level");
+        console.log("Setting up new level");
         }
 
         this.level = lvlData.level;
@@ -146,7 +146,7 @@ Model.prototype =
         this.goal = lvlData.goal;
 
         this._setAllowedLayers();
-		
+        
         // Create the mobs
 
         this.mobs = [];
@@ -155,9 +155,9 @@ Model.prototype =
         {
             if (this.DEBUG)
             {
-	        console.log(lvlData.enemies[i].type);
-	        console.log(lvlData.enemies[i].layer);
-	        console.log(lvlData.enemies[i].path);
+            console.log(lvlData.enemies[i].type);
+            console.log(lvlData.enemies[i].layer);
+            console.log(lvlData.enemies[i].path);
             }
 
             var mob = new Mob();
@@ -184,23 +184,23 @@ Model.prototype =
             this.mobs.push(mob);
         }
 
-		//Generate Coin-Map
-		this._coins = new Array();
-		this.coins = new Array();
-		var t = Date.now();
-		for (var y=0; y<this.level[0].length; y++) {
-			this._coins.push(new Array());
-			this.coins.push(new Array());
-			for (var x=0; x<this.level[0][0].length; x++) {
-				this._coins[y].push(t);
-				this.coins[y].push(0);
-			}
-		}
+        //Generate Coin-Map
+        this._coins = new Array();
+        this.coins = new Array();
+        var t = Date.now();
+        for (var y=0; y<this.level[0].length; y++) {
+            this._coins.push(new Array());
+            this.coins.push(new Array());
+            for (var x=0; x<this.level[0][0].length; x++) {
+                this._coins[y].push(t);
+                this.coins[y].push(0);
+            }
+        }
 
         if (this.DEBUG)
         {
-      	    console.log("Level data");
-	    	console.log(lvlData);
+              console.log("Level data");
+            console.log(lvlData);
             console.log(this.level);
             console.log(this.player);
             console.log(this.goal);
@@ -209,51 +209,51 @@ Model.prototype =
 
         if (this.onLevelCallback)
         {
-	    this.onLevelCallback();
+        this.onLevelCallback();
         }
 
         this.ready = true;
     },
 
-	/*
-	 * Ask if player gets coin
-	 */
+    /*
+     * Ask if player gets coin
+     */
 
-	"coinAtPlayer": function() {
-		return this.coins[this.player[1]][this.player[2]]
-	},
+    "coinAtPlayer": function() {
+        return this.coins[this.player[1]][this.player[2]]
+    },
 
 
-	/*
-	 * Let coins know where player stands
-	 */
+    /*
+     * Let coins know where player stands
+     */
 
-	"setCoinsStatus": function(delta) {
-		var t = Date.now();
-		this._coins[this.player[1]][this.player[2]] = t;
-		this._coins[this.goal[1]][this.goal[2]] = t;
-		this.coins[this.player[1]][this.player[2]] = 0;
-		for (var y=0;y<this.coins.length;y++) {
-			for (var x=0; x<this.coins[0].length;x++) {
-				if (this.coins[y][x] < 1) {
-					this.coins[y][x] = (t - this._coins[y][x]) / delta; 
-					if (this.coins[y][x] > 1)
-						this.coins[y][x] = 1;
-				}
-			}
-		}
-		return this;
-	},
+    "setCoinsStatus": function(delta) {
+        var t = Date.now();
+        this._coins[this.player[1]][this.player[2]] = t;
+        this._coins[this.goal[1]][this.goal[2]] = t;
+        this.coins[this.player[1]][this.player[2]] = 0;
+        for (var y=0;y<this.coins.length;y++) {
+            for (var x=0; x<this.coins[0].length;x++) {
+                if (this.coins[y][x] < 1) {
+                    this.coins[y][x] = (t - this._coins[y][x]) / delta; 
+                    if (this.coins[y][x] > 1)
+                        this.coins[y][x] = 1;
+                }
+            }
+        }
+        return this;
+    },
 
-	"_setAllowedLayers" : function() {
-		this.allowedLayers = [];
+    "_setAllowedLayers" : function() {
+        this.allowedLayers = [];
 
-		for (var i=0; i<3; i++) {
-			if (this.level[i][this.player[1]][this.player[2]] == 1)
-				this.allowedLayers.push(i);
+        for (var i=0; i<3; i++) {
+            if (this.level[i][this.player[1]][this.player[2]] == 1)
+                this.allowedLayers.push(i);
 
-		}
-	},
+        }
+    },
 
     /*
      * Restart level by resetting player and mob positions.
@@ -269,7 +269,7 @@ Model.prototype =
 
         if (this.DEBUG)
         {
-	    console.log("Restarting level");
+        console.log("Restarting level");
             console.log(this.level);
             console.log(this.player);
             console.log(this.goal);
@@ -286,7 +286,7 @@ Model.prototype =
 
         if (this.DEBUG)
         {
-	    console.log("Moving player up one layer");
+        console.log("Moving player up one layer");
             console.log(this.player[0]);
             console.log(this.player[1]);
             console.log(this.player[2]);
@@ -302,7 +302,7 @@ Model.prototype =
 
         if (this.DEBUG)
         {
-	    console.log("Moving player down one layer");
+        console.log("Moving player down one layer");
             console.log(this.player[0]);
             console.log(this.player[1]);
             console.log(this.player[2]);
@@ -316,11 +316,11 @@ Model.prototype =
     {
         this.player = [this.player[0], this.player[1], this.player[2] + 1];
         if (!this.isValidPosition()) 
-        	this.player = [this.player[0], this.player[1], this.player[2] - 1];
+            this.player = [this.player[0], this.player[1], this.player[2] - 1];
 
         if (this.DEBUG)
         {
-	    console.log("Moving player to the right");
+        console.log("Moving player to the right");
             console.log(this.player[0]);
             console.log(this.player[1]);
             console.log(this.player[2]);
@@ -334,11 +334,11 @@ Model.prototype =
     {
         this.player = [this.player[0], this.player[1], this.player[2] - 1];
         if (!this.isValidPosition()) 
-        	this.player = [this.player[0], this.player[1], this.player[2] + 1];
+            this.player = [this.player[0], this.player[1], this.player[2] + 1];
 
         if (this.DEBUG)
         {
-	    console.log("Moving player to the left");
+        console.log("Moving player to the left");
             console.log(this.player[0]);
             console.log(this.player[1]);
             console.log(this.player[2]);
@@ -352,11 +352,11 @@ Model.prototype =
     {
         this.player = [this.player[0], this.player[1] - 1, this.player[2]];
         if (!this.isValidPosition()) 
-        	this.player = [this.player[0], this.player[1] + 1, this.player[2]];
+            this.player = [this.player[0], this.player[1] + 1, this.player[2]];
 
         if (this.DEBUG)
         {
-	    console.log("Moving player upwards");
+        console.log("Moving player upwards");
             console.log(this.player[0]);
             console.log(this.player[1]);
             console.log(this.player[2]);
@@ -370,11 +370,11 @@ Model.prototype =
     {
         this.player = [this.player[0], this.player[1] + 1, this.player[2]];
         if (!this.isValidPosition()) 
-        	this.player = [this.player[0], this.player[1] - 1, this.player[2]];
+            this.player = [this.player[0], this.player[1] - 1, this.player[2]];
 
         if (this.DEBUG)
         {
-	    console.log("Moving player downwards");
+        console.log("Moving player downwards");
             console.log(this.player[0]);
             console.log(this.player[1]);
             console.log(this.player[2]);
@@ -388,7 +388,7 @@ Model.prototype =
     {
         if (this.DEBUG)
         {
-	    console.log("Checking if player position is valid");
+        console.log("Checking if player position is valid");
             console.log(this.player[0]);
             console.log(this.player[1]);
             console.log(this.player[2]);
@@ -401,22 +401,22 @@ Model.prototype =
                 && this.player[2] < this.level[0][0].length)) {
 
             return false;
-		}
+        }
 
         var val = this.level[this.player[0]][this.player[1]][this.player[2]] != 0;
 
         if (!val) {
-        	for (var i=0; i<this.allowedLayers.length;i++) {
-				if (this.level[this.allowedLayers[i]][this.player[1]][this.player[2]] != 0) {
-					val = true;
-					this.player[0] = this.allowedLayers[i];
-					break;
-				}
-			}
-		}
+            for (var i=0; i<this.allowedLayers.length;i++) {
+                if (this.level[this.allowedLayers[i]][this.player[1]][this.player[2]] != 0) {
+                    val = true;
+                    this.player[0] = this.allowedLayers[i];
+                    break;
+                }
+            }
+        }
 
-		if (val)
-        	this._setAllowedLayers();
+        if (val)
+            this._setAllowedLayers();
 
         return val;
     },
@@ -489,23 +489,23 @@ var MODEL = new Model();
  */
 
 var DATA = {
-	"_loaded" : false,
-	"_parts": 0,
-	"_total": 3,
-	"imgs" : new Array(),
-	"snds" : new Array()
+    "_loaded" : false,
+    "_parts": 0,
+    "_total": 3,
+    "imgs" : new Array(),
+    "snds" : new Array()
 
 };
 
 DATA.loaded = function() {
-	if (!DATA._loaded) {
-		DATA._loaded = DATA.loading() >= 1;
-	}
-	return DATA._loaded;
+    if (!DATA._loaded) {
+        DATA._loaded = DATA.loading() >= 1;
+    }
+    return DATA._loaded;
 }
 
 DATA.loading = function() {
-	return DATA._parts / DATA._total;
+    return DATA._parts / DATA._total;
 }
 
 /*
@@ -513,318 +513,318 @@ DATA.loading = function() {
  */
 
 function Engine() {
-	this.MOVABLES = 4;
-	this.COINS = 3;
+    this.MOVABLES = 4;
+    this.COINS = 3;
 
-	this.curLevel = 0;	
-	this.maxLevel = 1;
-	this.inMenus = false;
-	this.knownActiveLayers = undefined;
-	this.offsetX;
-	this.offsetY;
-	this.player = undefined;
-	this.mobs = undefined;
-	this.coins = undefined;
-	this.drawLayers = new Array();
-	this.stage = undefined;
-	this.ticker = 0;
-	this.requestMove = undefined;
-	this.requestColor = undefined;
-	this.levelStartTime = undefined;
-	this.coinDelta = 4500;
-	this.curCoins = 50;
+    this.curLevel = 0;    
+    this.maxLevel = 1;
+    this.inMenus = false;
+    this.knownActiveLayers = undefined;
+    this.offsetX;
+    this.offsetY;
+    this.player = undefined;
+    this.mobs = undefined;
+    this.coins = undefined;
+    this.drawLayers = new Array();
+    this.stage = undefined;
+    this.ticker = 0;
+    this.requestMove = undefined;
+    this.requestColor = undefined;
+    this.levelStartTime = undefined;
+    this.coinDelta = 4500;
+    this.curCoins = 50;
 }
 
 Engine.prototype = {
-	
-	"loadLevel": function(lvl) {
-		MODEL.ready = false;
-		MODEL.onLevelCallback = $.proxy(this, "initLevel");
-		$.getJSON("data/lvl" + lvl + ".json", function(response) {
-			MODEL.setLevel(response);
-		}).error(function() { alert("Could not load level " + lvl); });
+    
+    "loadLevel": function(lvl) {
+        MODEL.ready = false;
+        MODEL.onLevelCallback = $.proxy(this, "initLevel");
+        $.getJSON("data/lvl" + lvl + ".json", function(response) {
+            MODEL.setLevel(response);
+        }).error(function() { alert("Could not load level " + lvl); });
 
-	},
+    },
 
-	"showMenu": function() {
-		this.inMenus = true;
+    "showMenu": function() {
+        this.inMenus = true;
 
-	},
+    },
 
-	"nextLevel": function() {
-		if (this.curLevel < this.maxLevel)
-			this.curLevel ++;
+    "nextLevel": function() {
+        if (this.curLevel < this.maxLevel)
+            this.curLevel ++;
 
-		this.loadLevel(this.curLevel);
-	},
+        this.loadLevel(this.curLevel);
+    },
 
-	"loadImages" : function(imageArray) {
-		for (var i=0; i<imageArray.length; i++) {
-			var imageObj = new Image();
-			imageObj.onload = function() {
-				DATA._parts++;
-			}
-			DATA.imgs[imageArray[i][0]] = new Kinetic.Image( {
-				x: 0,
-				y: 0,
-				image: imageObj,
-				draggable: false});
-			imageObj.src = imageArray[i][1]
+    "loadImages" : function(imageArray) {
+        for (var i=0; i<imageArray.length; i++) {
+            var imageObj = new Image();
+            imageObj.onload = function() {
+                DATA._parts++;
+            }
+            DATA.imgs[imageArray[i][0]] = new Kinetic.Image( {
+                x: 0,
+                y: 0,
+                image: imageObj,
+                draggable: false});
+            imageObj.src = imageArray[i][1]
 
-		}
-	},
+        }
+    },
 
-	"loadSounds" : function(sndsArray) {
-		var suffix = ".wav";
-		if ((new Audio()).canPlayType("audio/wav") == "") {
-			if ((new Audio()).canPlayType("audio/ogg") != "")
-				suffix = ".ogg";
-			else if ((new Audio()).canPlayType("audio/mp3") != "")
-				suffix = ".mp3";
+    "loadSounds" : function(sndsArray) {
+        var suffix = ".wav";
+        if ((new Audio()).canPlayType("audio/wav") == "") {
+            if ((new Audio()).canPlayType("audio/ogg") != "")
+                suffix = ".ogg";
+            else if ((new Audio()).canPlayType("audio/mp3") != "")
+                suffix = ".mp3";
 
-		}
-		for (var i=0; i<sndsArray.length; i++) {
-			DATA.snds[sndsArray[i][0]] = new Audio(sndsArray[i][1] + suffix);
-			DATA.snds[sndsArray[i][0]].addEventListener(
-					'canplaythrough', function() {DATA._parts++;}, false);
-		}
-	},
+        }
+        for (var i=0; i<sndsArray.length; i++) {
+            DATA.snds[sndsArray[i][0]] = new Audio(sndsArray[i][1] + suffix);
+            DATA.snds[sndsArray[i][0]].addEventListener(
+                    'canplaythrough', function() {DATA._parts++;}, false);
+        }
+    },
 
-	"initLevel" : function() {
+    "initLevel" : function() {
 
-		if (!DATA.loaded) {
-			return;
-		}
+        if (!DATA.loaded) {
+            return;
+        }
 
-		for (var i=0; i<MODEL.level.length; i++) {
-			var addLayer = false;
-			if (this.drawLayers.length <= i) {
-				this.drawLayers[i] = new Kinetic.Layer();
-				this.drawLayers[i].clearBeforeDraw = false;
-				this.drawLayers[i].height = MODEL.level[i].length * 42;
-				this.drawLayers[i].width = MODEL.level[i][0].length * 64;
-				addLayer = true;
-			} else {
-				this.drawLayers[i].destroyChildren();
-			}
-				
-			for (var y=0; y<MODEL.level[i].length; y++) {
-				for (var x=0; x<MODEL.level[i][y].length; x++) {
-					if (MODEL.level[i][y][x] == 1) {
-						this.drawLayers[i].add(DATA.imgs[i].clone({
-							x: x*64, y:y*42}));
-					}
-				}
-			}
+        for (var i=0; i<MODEL.level.length; i++) {
+            var addLayer = false;
+            if (this.drawLayers.length <= i) {
+                this.drawLayers[i] = new Kinetic.Layer();
+                this.drawLayers[i].clearBeforeDraw = false;
+                this.drawLayers[i].height = MODEL.level[i].length * 42;
+                this.drawLayers[i].width = MODEL.level[i][0].length * 64;
+                addLayer = true;
+            } else {
+                this.drawLayers[i].destroyChildren();
+            }
+                
+            for (var y=0; y<MODEL.level[i].length; y++) {
+                for (var x=0; x<MODEL.level[i][y].length; x++) {
+                    if (MODEL.level[i][y][x] == 1) {
+                        this.drawLayers[i].add(DATA.imgs[i].clone({
+                            x: x*64, y:y*42}));
+                    }
+                }
+            }
 
-			if (addLayer)
-				this.stage.add(this.drawLayers[i]);
-		}
+            if (addLayer)
+                this.stage.add(this.drawLayers[i]);
+        }
 
-		if (this.drawLayers.length < this.COINS + 1) {
-			this.drawLayers[this.COINS] = new Kinetic.Layer();
-			this.stage.add(this.drawLayers[this.COINS]);
-		} else {
-			this.drawLayers[this.COINS].destroyChildren();
-		}
-		this.coins = [];
-		for (var y=0; y<MODEL.coins.length; y++) {
-			this.coins.push([]);
-			for (var x=0; x<MODEL.coins[0].length; x++) {
-				this.coins[y].push(DATA.imgs["coin"].clone({
-					x: x * 64 + 26, y: y * 42 + 8}));
-				this.drawLayers[this.COINS].add(this.coins[y][x]);
-				this.coins[y][x].visible(MODEL.coins[y][x] == 1);
-			}
-		}
+        if (this.drawLayers.length < this.COINS + 1) {
+            this.drawLayers[this.COINS] = new Kinetic.Layer();
+            this.stage.add(this.drawLayers[this.COINS]);
+        } else {
+            this.drawLayers[this.COINS].destroyChildren();
+        }
+        this.coins = [];
+        for (var y=0; y<MODEL.coins.length; y++) {
+            this.coins.push([]);
+            for (var x=0; x<MODEL.coins[0].length; x++) {
+                this.coins[y].push(DATA.imgs["coin"].clone({
+                    x: x * 64 + 26, y: y * 42 + 8}));
+                this.drawLayers[this.COINS].add(this.coins[y][x]);
+                this.coins[y][x].visible(MODEL.coins[y][x] == 1);
+            }
+        }
 
-		
-		if (this.drawLayers.length < this.MOVABLES + 1) {
-			this.drawLayers[this.MOVABLES] = new Kinetic.Layer();
-			this.stage.add(this.drawLayers[this.MOVABLES]);
-		} else {
-			this.drawLayers[this.MOVABLES].destroyChildren();
-		}
-		this.player = DATA.imgs["player"].clone({
-			x: MODEL.player[2] * 64, y: MODEL.player[1] * 42});
-		this.drawLayers[this.MOVABLES].add(this.player);
+        
+        if (this.drawLayers.length < this.MOVABLES + 1) {
+            this.drawLayers[this.MOVABLES] = new Kinetic.Layer();
+            this.stage.add(this.drawLayers[this.MOVABLES]);
+        } else {
+            this.drawLayers[this.MOVABLES].destroyChildren();
+        }
+        this.player = DATA.imgs["player"].clone({
+            x: MODEL.player[2] * 64, y: MODEL.player[1] * 42});
+        this.drawLayers[this.MOVABLES].add(this.player);
 
-		this.mobs = new Array();
-		for (var i=0; i < MODEL.mobs.length; i++) {
-			var mPos = MODEL.mobs[i].getPos();
-			this.mobs[i] = DATA.imgs["mob"].clone({
-				x: mPos[2]*64, y: mPos[1] * 42});
-			this.drawLayers[this.MOVABLES].add(this.mobs[i]);
-			};
-		
-		this.levelStartTime = Date.now();
-	},
+        this.mobs = new Array();
+        for (var i=0; i < MODEL.mobs.length; i++) {
+            var mPos = MODEL.mobs[i].getPos();
+            this.mobs[i] = DATA.imgs["mob"].clone({
+                x: mPos[2]*64, y: mPos[1] * 42});
+            this.drawLayers[this.MOVABLES].add(this.mobs[i]);
+            };
+        
+        this.levelStartTime = Date.now();
+    },
 
-	"drawLoading": function() {
-		//this.ctx.fillRect(10, 10, 300 * DATA.loading(), 30);
-	},
+    "drawLoading": function() {
+        //this.ctx.fillRect(10, 10, 300 * DATA.loading(), 30);
+    },
 
-	"drawMenu": function() {
+    "drawMenu": function() {
 
-	},
+    },
 
-	"drawLevel": function() {
-		if (!MODEL.ready)
-			return;
+    "drawLevel": function() {
+        if (!MODEL.ready)
+            return;
 
-		this.player.x(MODEL.player[2] * 64 + 2);
-		this.player.y(MODEL.player[1] * 42 - 10);
+        this.player.x(MODEL.player[2] * 64 + 2);
+        this.player.y(MODEL.player[1] * 42 - 10);
 
-		for (var i=0; i<MODEL.mobs.length; i++) {
-			var mobP = MODEL.mobs[i].getPos();
-			this.mobs[i].x(mobP[2] * 64 + 5);
-			this.mobs[i].y(mobP[1] * 42 - 10);
-		}
+        for (var i=0; i<MODEL.mobs.length; i++) {
+            var mobP = MODEL.mobs[i].getPos();
+            this.mobs[i].x(mobP[2] * 64 + 5);
+            this.mobs[i].y(mobP[1] * 42 - 10);
+        }
 
-		this.offsetY = (MODEL.height - MODEL.player[1]) * 42 - 200;
-		this.offsetX = (MODEL.width - MODEL.player[0]) * 64 - 200;
-		var aL = MODEL.activeLayers();
-		
-		for (var y=0; y<MODEL.coins.length; y++) {
-			for (var x=0; x<MODEL.coins[0].length; x++) {
-				this.coins[y][x].visible(MODEL.coins[y][x] == 1);
-			}
-		}
+        this.offsetY = (MODEL.height - MODEL.player[1]) * 42 - 200;
+        this.offsetX = (MODEL.width - MODEL.player[0]) * 64 - 200;
+        var aL = MODEL.activeLayers();
+        
+        for (var y=0; y<MODEL.coins.length; y++) {
+            for (var x=0; x<MODEL.coins[0].length; x++) {
+                this.coins[y][x].visible(MODEL.coins[y][x] == 1);
+            }
+        }
 
-		for (var i=0; i<this.drawLayers.length; i++) {
-			this.drawLayers[i].offsetX(this.player.x() - 200);
-			this.drawLayers[i].offsetY(this.player.y() - 200);
-			this.drawLayers[i].opacity(aL[i] * 0.7 + 0.05);
-		}
+        for (var i=0; i<this.drawLayers.length; i++) {
+            this.drawLayers[i].offsetX(this.player.x() - 200);
+            this.drawLayers[i].offsetY(this.player.y() - 200);
+            this.drawLayers[i].opacity(aL[i] * 0.7 + 0.05);
+        }
 
-		for (var i=0; i<this.drawLayers.length; i++)
-			this.drawLayers[i].draw()
-	},
+        for (var i=0; i<this.drawLayers.length; i++)
+            this.drawLayers[i].draw()
+    },
 
-	"draw" : function() {
-		if (DATA.loaded) {
-			if (this.inMenus)
-				this.drawMenu();
-			else
-				this.drawLevel();
+    "draw" : function() {
+        if (DATA.loaded) {
+            if (this.inMenus)
+                this.drawMenu();
+            else
+                this.drawLevel();
 
-		} else {
-			this.drawLoading();
-		}
-	},
+        } else {
+            this.drawLoading();
+        }
+    },
 
-	"update": function() {
-		if (DATA.loaded) {
-			if (this.inMenus) {
+    "update": function() {
+        if (DATA.loaded) {
+            if (this.inMenus) {
 
-			} else if (MODEL.ready) {
+            } else if (MODEL.ready) {
 
-				if (MODEL.isWinning()) {
-					console.log("Won");
-					DATA.snds["completed"].play();
-					this.nextLevel();
-				}
+                if (MODEL.isWinning()) {
+                    console.log("Won");
+                    DATA.snds["completed"].play();
+                    this.nextLevel();
+                }
 
-				if (!MODEL.isValidPosition()) {
-					console.log("Fell off");
-					MODEL.restart();
-					return;
-				}
+                if (!MODEL.isValidPosition()) {
+                    console.log("Fell off");
+                    MODEL.restart();
+                    return;
+                }
 
-				if (MODEL.isCaught()) {
-					console.log("Caught");
-					DATA.snds["caught"].play();
-					MODEL.restart();
-					return;
-				}
+                if (MODEL.isCaught()) {
+                    console.log("Caught");
+                    DATA.snds["caught"].play();
+                    MODEL.restart();
+                    return;
+                }
 
-				if (MODEL.ready) {
-					if (this.ticker % 17 == 0)
-						MODEL.moveMobs();
+                if (MODEL.ready) {
+                    if (this.ticker % 17 == 0)
+                        MODEL.moveMobs();
 
-					if (this.ticker % 7 == 0) {
+                    if (this.ticker % 7 == 0) {
 
-						if (this.requestMove == UP)
-							MODEL.up();
-						else if (this.requestMove == DOWN)
-							MODEL.down();
-						else if (this.requestMove == LEFT)
-							MODEL.left();
-						else if (this.requestMove == RIGHT)
-							MODEL.right();
-						
-						if (MODEL.coinAtPlayer()) {
-							DATA.snds["coin"].play();
-							this.curCoins ++;
-						}
+                        if (this.requestMove == UP)
+                            MODEL.up();
+                        else if (this.requestMove == DOWN)
+                            MODEL.down();
+                        else if (this.requestMove == LEFT)
+                            MODEL.left();
+                        else if (this.requestMove == RIGHT)
+                            MODEL.right();
+                        
+                        if (MODEL.coinAtPlayer()) {
+                            DATA.snds["coin"].play();
+                            this.curCoins ++;
+                        }
 
-						MODEL.setCoinsStatus(this.coinDelta);
-						this.requestMove = undefined;
-					}
-					
-				}
-			}
-		} else {
-			
-		}
+                        MODEL.setCoinsStatus(this.coinDelta);
+                        this.requestMove = undefined;
+                    }
+                    
+                }
+            }
+        } else {
+            
+        }
 
-		this.ticker++;
-	},
+        this.ticker++;
+    },
 
-	"start" : function() {
-		this.stage = new Kinetic.Stage({
-			container: 'game',
-			width: 400,
-			height: 400
-		});
+    "start" : function() {
+        this.stage = new Kinetic.Stage({
+            container: 'game',
+            width: 400,
+            height: 400
+        });
 
-		var staticLayer = new Kinetic.Layer();
-		this.stage.add(staticLayer);
+        var staticLayer = new Kinetic.Layer();
+        this.stage.add(staticLayer);
 
-		this.loadImages([
-				//DATA-key, src, width, heigh
-				[0, "img/c0.png"],
-				[1, "img/c1.png"],
-				[2, "img/c2.png"],
-				["player", "img/player.png"],
-				["mob", "img/mob.png"],
-				["coin", "img/coin.png"]]);
+        this.loadImages([
+                //DATA-key, src, width, heigh
+                [0, "img/c0.png"],
+                [1, "img/c1.png"],
+                [2, "img/c2.png"],
+                ["player", "img/player.png"],
+                ["mob", "img/mob.png"],
+                ["coin", "img/coin.png"]]);
 
-		this.loadSounds([
-				["coin", "sound/coin"],
-				["caught", "sound/caught"],
-				["starved", "sound/starved"],
-				["completed", "sound/lvlCompleted"]]);
-		
-		//TODO: A hack to load first level
-		var f1 = $.proxy(this, "nextLevel");
-		setTimeout(f1, 200)
+        this.loadSounds([
+                ["coin", "sound/coin"],
+                ["caught", "sound/caught"],
+                ["starved", "sound/starved"],
+                ["completed", "sound/lvlCompleted"]]);
+        
+        //TODO: A hack to load first level
+        var f1 = $.proxy(this, "nextLevel");
+        setTimeout(f1, 200)
 
-		//Setting up callbacks
-		var f = $.proxy(this, "draw");
-		window.setInterval(f, 31);
-		var f2 = $.proxy(this, "update");
-		window.setInterval(f2, 31);
+        //Setting up callbacks
+        var f = $.proxy(this, "draw");
+        window.setInterval(f, 31);
+        var f2 = $.proxy(this, "update");
+        window.setInterval(f2, 31);
 
-	}
+    }
 }
 
 var e = new Engine();
 e.start();
-function checkKey(ev) {	
-	var code = ev.keyCode || ev.witch;
-	if (code == UP)
-		e.requestMove = UP;
-	else if (code == RIGHT)
-		e.requestMove = RIGHT;
-	else if (code == DOWN)
-		e.requestMove = DOWN;
-	else if (code == LEFT)
-		e.requestMove = LEFT;
-	else if (code == 82)
-		MODEL.restart();
-	else 
-		console.log(code);
+function checkKey(ev) {    
+    var code = ev.keyCode || ev.witch;
+    if (code == UP)
+        e.requestMove = UP;
+    else if (code == RIGHT)
+        e.requestMove = RIGHT;
+    else if (code == DOWN)
+        e.requestMove = DOWN;
+    else if (code == LEFT)
+        e.requestMove = LEFT;
+    else if (code == 82)
+        MODEL.restart();
+    else 
+        console.log(code);
 }
 
 $(document).keydown (checkKey);

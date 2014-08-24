@@ -19,6 +19,7 @@ TODO
 DONE
 ----
 
+* CSS: Make page look nice
 * MUSIC: Menu theme
 * CODE: Menu (Continue, Restart, Music On/Off, Effects On/Off)
 * MUSIC: Level theme

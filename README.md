@@ -3,9 +3,10 @@ TBD
 
 The world has separated onto three planes.
 Scattered piecies of what once was a comforting and
-predictable whole has become a dangerous place.
-There are still a few connections between them.
-Just enough to traverse it.
+predictable whole have become a dangerous place to live in.
+There are still a few connections between the emerging worlds.
+Just enough to traverse the multi-world to reach the beacon that can
+bring them all together again.
 
 
 TODO
@@ -16,11 +17,6 @@ TODO
 * CODE: Effect when death
 * CODE: Effect when goal
 * CODE: Loading game screen
-* CODE: Level progression and return to menu when done
-* CODE: Scroll between positions
-* CODE: Fine-tune update frequencies and when to check collision
-* CODE: Make timer start when first keypress
-* GRAPHICS: Draw un-bound enemy
 
 DONE
 ----
@@ -37,3 +33,7 @@ DONE
 * GRAPHICS: Draw goal
 * CODE: Animate enemy
 * CODE: Animate character
+* CODE: Fine-tune update frequencies and when to check collision
+* CODE: Scroll between positions
+* CODE: Make timer start when first keypress
+* CODE: Level progression and return to menu when done

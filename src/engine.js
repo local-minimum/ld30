@@ -587,12 +587,12 @@ Engine.prototype = {
     },
 
     "loadSounds" : function(sndsArray) {
-        var suffix = ".wav";
-        if ((new Audio()).canPlayType("audio/wav") == "") {
-            if ((new Audio()).canPlayType("audio/ogg") != "")
-                suffix = ".ogg";
-            else if ((new Audio()).canPlayType("audio/mp3") != "")
+        var suffix = ".ogg";
+        if ((new Audio()).canPlayType("audio/ogg") == "") {
+            if ((new Audio()).canPlayType("audio/mp3") != "")
                 suffix = ".mp3";
+            else if ((new Audio()).canPlayType("audio/wav") != "")
+                suffix = ".wav";
 
         }
         for (var i=0; i<sndsArray.length; i++) {
@@ -692,6 +692,14 @@ Engine.prototype = {
             fontFamily: "serif"});
         this.UI.add(this.coinsText);
         */
+
+        DATA.snds['level'].addEventListener("ended", function() {
+                this.currentTime = 0;
+                this.play();
+                }, false);
+
+        DATA.snds['level'].play();
+
         this.levelStartTime = Date.now();
     },
 
@@ -847,7 +855,8 @@ Engine.prototype = {
                 ["coin", "sound/coin"],
                 ["caught", "sound/caught"],
                 ["starved", "sound/starved"],
-                ["completed", "sound/lvlCompleted"]]);
+                ["completed", "sound/lvlCompleted"],
+                ["level", "sound/aRunningPuppy"]]);
         
         //TODO: A hack to load first level
         var f1 = $.proxy(this, "nextLevel");
@@ -878,6 +887,8 @@ function checkKey(ev) {
         e.requestMove = LEFT;
     else if (code == 82)
         MODEL.restart();
+    else if (code == 77)
+        DATA.snds["level"].muted = !DATA.snds["level"].muted;
     else 
         console.log(code);
 }

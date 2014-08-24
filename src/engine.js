@@ -145,10 +145,12 @@ Model.prototype =
         this.player = lvlData.start;
         this.goal = lvlData.goal;
 
-		this._setAllowedLayers();
+        this._setAllowedLayers();
 		
-
         // Create the mobs
+
+        this.mobs = [];
+
         for (var i in lvlData.enemies)
         {
             if (this.DEBUG)

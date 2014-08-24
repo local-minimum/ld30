@@ -187,7 +187,7 @@ Model.prototype =
         //Generate Coin-Map
         this._coins = new Array();
         this.coins = new Array();
-        var t = Date.now();
+        var t = 0;
         for (var y=0; y<this.level[0].length; y++) {
             this._coins.push(new Array());
             this.coins.push(new Array());
@@ -220,7 +220,7 @@ Model.prototype =
      */
 
     "coinAtPlayer": function() {
-        return this.coins[this.player[1]][this.player[2]]
+        return this.coins[this.player[1]][this.player[2]] == 1
     },
 
 
@@ -266,6 +266,17 @@ Model.prototype =
         {
             this.mobs[i].position = 0;
         }
+
+        for (var y=0; y<this.level[0].length; y++) {
+            for (var x=0; x<this.level[0][0].length; x++) {
+                this._coins[y][x] = 0;
+                this.coins[y][x] = 1;
+            }
+        }
+        var t = Date.now();
+        this._coins[this.player[1]][this.player[2]] = t;
+        this._coins[this.goal[1]][this.goal[2]] = t;
+        this.coins[this.player[1]][this.player[2]] = 0;
 
         if (this.DEBUG)
         {
@@ -515,6 +526,7 @@ DATA.loading = function() {
 function Engine() {
     this.MOVABLES = 4;
     this.COINS = 3;
+    this.UI = undefined;
 
     this.curLevel = 0;    
     this.maxLevel = 10;
@@ -533,6 +545,7 @@ function Engine() {
     this.levelStartTime = undefined;
     this.coinDelta = 4500;
     this.curCoins = 50;
+    this.coinsText = undefined;
 }
 
 Engine.prototype = {
@@ -575,12 +588,12 @@ Engine.prototype = {
     },
 
     "loadSounds" : function(sndsArray) {
-        var suffix = ".wav";
-        if ((new Audio()).canPlayType("audio/wav") == "") {
-            if ((new Audio()).canPlayType("audio/ogg") != "")
-                suffix = ".ogg";
-            else if ((new Audio()).canPlayType("audio/mp3") != "")
+        var suffix = ".ogg";
+        if ((new Audio()).canPlayType("audio/ogg") == "") {
+            if ((new Audio()).canPlayType("audio/mp3") != "")
                 suffix = ".mp3";
+            else if ((new Audio()).canPlayType("audio/wav") != "")
+                suffix = ".wav";
 
         }
         for (var i=0; i<sndsArray.length; i++) {
@@ -590,12 +603,17 @@ Engine.prototype = {
         }
     },
 
+    "reset": function() {
+        this.curCoins = 50;
+    },
+
     "initLevel" : function() {
 
         if (!DATA.loaded) {
             return;
         }
 
+        this.reset();
         for (var i=0; i<MODEL.level.length; i++) {
             var addLayer = false;
             if (this.drawLayers.length <= i) {
@@ -621,6 +639,7 @@ Engine.prototype = {
                 this.stage.add(this.drawLayers[i]);
         }
 
+        //HANDLE COINS
         if (this.drawLayers.length < this.COINS + 1) {
             this.drawLayers[this.COINS] = new Kinetic.Layer();
             this.stage.add(this.drawLayers[this.COINS]);
@@ -638,7 +657,7 @@ Engine.prototype = {
             }
         }
 
-        
+        //HANDLE MOVABLES
         if (this.drawLayers.length < this.MOVABLES + 1) {
             this.drawLayers[this.MOVABLES] = new Kinetic.Layer();
             this.stage.add(this.drawLayers[this.MOVABLES]);
@@ -657,6 +676,31 @@ Engine.prototype = {
             this.drawLayers[this.MOVABLES].add(this.mobs[i]);
             };
         
+        //HANDLE UI
+        /*
+        if (this.UI) {
+            this.UI.destroyChildren();
+        } else {
+            this.UI = new Kinetic.Layer();
+            this.stage.add(this.UI);
+        }
+        this.coinsText = new Kinetic.Text({
+            x: 10,
+            y: 10,
+            text: "Shards: " + this.curCoins,
+            fontSize: 30,
+            color: "black",
+            fontFamily: "serif"});
+        this.UI.add(this.coinsText);
+        */
+
+        DATA.snds['level'].addEventListener("ended", function() {
+                this.currentTime = 0;
+                this.play();
+                }, false);
+
+        DATA.snds['level'].play();
+
         this.levelStartTime = Date.now();
     },
 
@@ -697,8 +741,13 @@ Engine.prototype = {
             this.drawLayers[i].opacity(aL[i] * 0.7 + 0.05);
         }
 
+        //this.coinsText.text("Shards: " + this.curCoins);
+        this.coinsText.html("Shards: " + this.curCoins);
+
         for (var i=0; i<this.drawLayers.length; i++)
             this.drawLayers[i].draw()
+
+        //this.UI.draw();
     },
 
     "draw" : function() {
@@ -722,11 +771,13 @@ Engine.prototype = {
                 if (MODEL.isWinning()) {
                     console.log("Won");
                     DATA.snds["completed"].play();
+                    this.reset();
                     this.nextLevel();
                 }
 
                 if (!MODEL.isValidPosition()) {
                     console.log("Fell off");
+                    this.reset();
                     MODEL.restart();
                     return;
                 }
@@ -734,11 +785,22 @@ Engine.prototype = {
                 if (MODEL.isCaught()) {
                     console.log("Caught");
                     DATA.snds["caught"].play();
+                    this.reset();
                     MODEL.restart();
                     return;
                 }
 
+                if (this.curCoins <= 0) {
+                    console.log("Starved");
+                    DATA.snds["starved"].play();
+                    this.reset();
+                    MODEL.restart();
+                }
+
                 if (MODEL.ready) {
+                    if (this.ticker % 11 == 0)
+                        this.curCoins --;
+
                     if (this.ticker % 17 == 0)
                         MODEL.moveMobs();
 
@@ -794,11 +856,14 @@ Engine.prototype = {
                 ["coin", "sound/coin"],
                 ["caught", "sound/caught"],
                 ["starved", "sound/starved"],
-                ["completed", "sound/lvlCompleted"]]);
+                ["completed", "sound/lvlCompleted"],
+                ["level", "sound/aRunningPuppy"]]);
         
         //TODO: A hack to load first level
         var f1 = $.proxy(this, "nextLevel");
         setTimeout(f1, 200)
+
+        this.coinsText = $("#shards");
 
         //Setting up callbacks
         var f = $.proxy(this, "draw");
@@ -823,6 +888,8 @@ function checkKey(ev) {
         e.requestMove = LEFT;
     else if (code == 82)
         MODEL.restart();
+    else if (code == 77)
+        DATA.snds["level"].muted = !DATA.snds["level"].muted;
     else 
         console.log(code);
 }

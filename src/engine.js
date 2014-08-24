@@ -750,20 +750,21 @@ Engine.prototype = {
         this.menuLayer[0] = new Kinetic.Layer();
         this.menuLayer[0].add(DATA.imgs['title']);
         DATA.imgs['title'].x((SHAPE_X - DATA.imgs['title'].width()) / 2);
-        DATA.imgs['title'].y(10);
+        DATA.imgs['title'].y(SHAPE_Y * 0.1);
         this.menuLayer[0].add(DATA.imgs['startA']);
         this.menuLayer[0].add(DATA.imgs['startI']);
-        DATA.imgs['startA'].x(100);
-        DATA.imgs['startA'].y(300);
-        DATA.imgs['startI'].x(100);
-        DATA.imgs['startI'].y(300);
+        DATA.imgs['startA'].x(SHAPE_X/ 2 - 100);
+        DATA.imgs['startA'].y(SHAPE_Y * 3 / 4);
+        DATA.imgs['startI'].x(SHAPE_X / 2 - 100);
+        DATA.imgs['startI'].y(SHAPE_Y * 3 / 4);
         this.menuLayer[0].add(DATA.imgs['resumeA']);
         this.menuLayer[0].add(DATA.imgs['resumeI']);
-        DATA.imgs['resumeA'].x(100);
-        DATA.imgs['resumeA'].y(250);
-        DATA.imgs['resumeI'].x(100);
-        DATA.imgs['resumeI'].y(250);
-        this.menuBeetle = DATA.imgs['player'].clone({x: 70, y: 260});
+        DATA.imgs['resumeA'].x(SHAPE_X/ 2 - 100);
+        DATA.imgs['resumeA'].y(SHAPE_Y * 0.625);
+        DATA.imgs['resumeI'].x(SHAPE_X / 2 - 100);
+        DATA.imgs['resumeI'].y(SHAPE_Y * 0.625);
+        this.menuBeetle = DATA.imgs['player'].clone(
+                {x: SHAPE_X / 2 - 140, y: 260});
         this.menuBeetle.start();
         this.menuLayer[0].add(this.menuBeetle);
 
@@ -776,9 +777,9 @@ Engine.prototype = {
         DATA.imgs['menuCandy1'].x((SHAPE_X - DATA.imgs['menuCandy1'].width()) / 2);
         DATA.imgs['menuCandy2'].x((SHAPE_X - DATA.imgs['menuCandy1'].width()) / 2);
         DATA.imgs['menuCandy3'].x((SHAPE_X - DATA.imgs['menuCandy1'].width()) / 2);
-        DATA.imgs['menuCandy1'].y(70);
-        DATA.imgs['menuCandy2'].y(70);
-        DATA.imgs['menuCandy3'].y(70);
+        DATA.imgs['menuCandy1'].y(SHAPE_Y / 2 - 130);
+        DATA.imgs['menuCandy2'].y(SHAPE_Y / 2 - 130);
+        DATA.imgs['menuCandy3'].y(SHAPE_Y / 2 - 130);
 
         for (var i=0; i<this.menuLayer.length; i++)
             this.stage.add(this.menuLayer[i]);
@@ -889,9 +890,9 @@ Engine.prototype = {
             DATA.imgs["resumeA"].visible(this.curLevel > 0);
             DATA.imgs["startI"].visible(!this.menuStart)
             if (this.menuStart) {
-                this.menuBeetle.y(310);
+                this.menuBeetle.y(SHAPE_Y * 3 / 4 + 10);
             } else {
-                this.menuBeetle.y(260);
+                this.menuBeetle.y(SHAPE_Y * 0.625 + 10);
             }
 
             var t = Date.now();

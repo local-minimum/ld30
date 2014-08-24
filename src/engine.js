@@ -521,7 +521,7 @@ var MODEL = new Model();
 var DATA = {
     "_loaded" : false,
     "_parts": 0,
-    "_total": 3,
+    "_total": 19,
     "imgs" : new Array(),
     "snds" : new Array()
 
@@ -567,7 +567,7 @@ function Engine() {
     this.playerOff = this.playerRotations.UP;
     this.curLevel = 0;    
     this.maxLevel = 10;
-    this.inMenus = false;
+    this.inMenus = true;
     this.knownActiveLayers = undefined;
     this.offsetX;
     this.offsetY;
@@ -587,13 +587,14 @@ function Engine() {
     this.lvlGoal = undefined;
     this.moved = false;
     this.movedMob = false;
+    this.menuLayer = undefined;
 }
 
 Engine.prototype = {
     
     "loadLevel": function(lvl) {
         MODEL.ready = false;
-        MODEL.onLevelCallback = $.proxy(this, "initLevel");
+        MODEL.onLevelCallback = $.proxy(this, "initMenu");
         $.getJSON("data/lvl" + lvl + ".json", function(response) {
             MODEL.setLevel(response);
         }).error(function() { alert("Could not load level " + lvl); });
@@ -683,6 +684,14 @@ Engine.prototype = {
         this.mobMoved = true;
         this.moved = true;
         this.requestMove = undefined;
+    },
+
+    "initMenu":function() {
+        this.menuLayer = new Kinetic.Layer();
+        this.menuLayer.add(DATA.imgs['title']);
+        DATA.imgs['title'].x(10);
+        DATA.imgs['title'].y(10);
+
     },
 
     "initLevel" : function() {
@@ -782,7 +791,8 @@ Engine.prototype = {
     },
 
     "drawMenu": function() {
-
+        if (this.menuLayer)
+            this.menuLayer.draw();
     },
 
     "drawLevel": function() {
@@ -979,7 +989,14 @@ Engine.prototype = {
                     ]},
                     animation: 'standing'
                     }],
-                ["coin", "img/coin.png"]]);
+                ["coin", "img/coin.png"],
+                ["title", "img/title.png"],
+                ["startI", "img/startInactive.png"],
+                ["startA", "img/startActive.png"],
+                ["resumeI", "img/resumeInactive.png"],
+                ["resumeA", "img/resumeActive.png"],
+                ["menuCandy1", "img/menuCandy1.png"],
+                ["menuCandy2", "img/menuCandy2.png"]]);
 
         this.loadSounds([
                 ["coin", "sound/coin"],

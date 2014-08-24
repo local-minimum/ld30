@@ -666,10 +666,11 @@ Engine.prototype = {
         this.player.rotation(this.playerOff.rotation);
         this.player.x(MODEL.player[2] * 64 + this.playerOff.x);
         this.player.y(MODEL.player[1] * 42 - this.playerOff.y);
-        this.offsetX = this.player.x() + this.playerOff.x - 200;
-        this.offsetY = this.player.y() + this.playerOff.y - 200;
+        this.offsetX = MODEL.player[2] * 64 + 32 - 200;
+        this.offsetY = MODEL.player[1] * 42 + 21 - 200;
         this.mobMoved = true;
         this.moved = true;
+        this.requestMove = undefined;
     },
 
     "initLevel" : function() {
@@ -715,7 +716,7 @@ Engine.prototype = {
             this.coins.push([]);
             for (var x=0; x<MODEL.coins[0].length; x++) {
                 this.coins[y].push(DATA.imgs["coin"].clone({
-                    x: x * 64 + 26, y: y * 42 + 12}));
+                    x: x * 64 + 26, y: y * 42 + 10}));
                 this.drawLayers[this.COINS].add(this.coins[y][x]);
                 this.coins[y][x].visible(MODEL.coins[y][x] == 1);
             }
@@ -809,7 +810,7 @@ Engine.prototype = {
             for (var i=0; i<MODEL.mobs.length; i++) {
                 var mobP = MODEL.mobs[i].getPos();
                 this.mobs[i].x(mobP[2] * 64 + 15);
-                this.mobs[i].y(mobP[1] * 42 - 7);
+                this.mobs[i].y(mobP[1] * 42 - 4);
             }
             this.movedMob = false;
         }
@@ -915,8 +916,8 @@ Engine.prototype = {
 
                         if (this.moved) {
 
-                            this.offsetX = this.player.x() + this.playerOff.x - 200;
-                            this.offsetY = this.player.y() + this.playerOff.y - 200;
+                            this.offsetX = MODEL.player[2] * 64 + 32 - 200;
+                            this.offsetY = MODEL.player[1] * 42 + 21 - 200;
                             this.player.rotation(this.playerOff.rotation);
 
                             if (MODEL.coinAtPlayer()) {

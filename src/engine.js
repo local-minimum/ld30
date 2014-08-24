@@ -606,10 +606,13 @@ Engine.prototype = {
     },
 
     "nextLevel": function() {
-        if (this.curLevel < this.maxLevel)
+        if (this.curLevel < this.maxLevel) {
             this.curLevel ++;
-
-        this.loadLevel(this.curLevel);
+            this.loadLevel(this.curLevel);
+        } else {
+            this.curLevel = 0;
+            this.showMenu();
+        }
     },
 
     "loadImages" : function(imageArray) {
@@ -816,18 +819,18 @@ Engine.prototype = {
             var aL = MODEL.activeLayers();
             
             for (var i=0; i<this.drawLayers.length; i++) {
-                var tween = new Kinetic.Tween({
-                    node: this.drawLayers[i],
-                    offsetX: this.offsetX,
-                    offsetY: this.offsetY,
-                    duration: 0.03*3,
-                    easing: Kinetic.Easings.EaseInOut
-                });
-                tween.play();
-                //this.drawLayers[i].offsetX(this.offsetX); 
-                //this.drawLayers[i].offsetY(this.offsetY); 
                 this.drawLayers[i].opacity(aL[i] * 0.7 + 0.05);
             }
+            var tween = new Kinetic.Tween({
+                node: this.stage,
+                offsetX: this.offsetX,
+                offsetY: this.offsetY,
+                duration: 0.03*3,
+                easing: Kinetic.Easings.EaseInOut
+            });
+            tween.play();
+            //this.drawLayers[i].offsetX(this.offsetX); 
+            //this.drawLayers[i].offsetY(this.offsetY); 
             this.moved = false;
         }
         for (var i=0; i<this.drawLayers.length; i++)
@@ -1016,6 +1019,8 @@ function checkKey(ev) {
         MODEL.restart();
     else if (code == 77)
         DATA.snds["level"].muted = !DATA.snds["level"].muted;
+    else if (code == 80 || code == 27)
+        e.showMenu();
     else 
         console.log(code);
 }

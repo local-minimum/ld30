@@ -659,6 +659,7 @@ Engine.prototype = {
             this.playerOff = this.playerRotations.DOWN;
         else if (MODEL.startRotation == "LEFT")
             this.playerOff = this.playerRotations.LEFT;
+        this.player.rotation(this.playerOff.rotation);
         this.player.x(MODEL.player[2] * 64 + this.playerOff.x);
         this.player.y(MODEL.player[1] * 42 - this.playerOff.y);
         this.offsetX = this.player.x() + this.playerOff.x - 200;

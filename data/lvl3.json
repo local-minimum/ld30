@@ -26,6 +26,7 @@
     "coins": 10,
     "start": [0, 2, 0],
     "goal": [2, 2, 6],
+    "startRotation": "RIGHT",
     "enemies":
     [
         {

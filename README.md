@@ -21,6 +21,7 @@ TODO
 * CODE: Scroll between positions
 * CODE: Fine-tune update frequencies and when to check collision
 * CODE: Add cache() to images...
+* CODE: Make timer start when first keypress
 * GRAPHICS: Draw goal
 * GRAPHICS: Draw un-bound enemy
 

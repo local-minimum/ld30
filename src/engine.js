@@ -117,7 +117,7 @@ function Model()
     /*
      * Coins
      * */
-
+    this.startCoins = undefined;
     this._coins = undefined;
     this.coins = undefined;
 
@@ -185,6 +185,7 @@ Model.prototype =
         }
 
         //Generate Coin-Map
+        this.startCoins = lvlData.coins;
         this._coins = new Array();
         this.coins = new Array();
         var t = 0;
@@ -604,7 +605,7 @@ Engine.prototype = {
     },
 
     "reset": function() {
-        this.curCoins = 50;
+        this.curCoins = MODEL.startCoins;
     },
 
     "initLevel" : function() {

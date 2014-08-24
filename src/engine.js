@@ -12,14 +12,18 @@ $.ajaxSetup({beforeSend: function(xhr){
 }
 });
 
-var SHAPE_X = 400;
-var SHAPE_Y = 400;
+var gW = $("#game");
+var SHAPE_X = gW.width();
+var SHAPE_Y = gW.height();
 var IN_GAME_SCALE = 1.5;
 var DOWN = 40;
 var UP = 38;
 var LEFT = 37;
 var RIGHT = 39;
 var ENTER = 13;
+var BASE_OPACITY = 0.45;
+var ACTIVE_OPACITY = 0.3;
+var STAGE_OPACITY = 1;
 
 function Mob()
 {
@@ -734,6 +738,10 @@ Engine.prototype = {
         this.mobMoved = true;
         this.moved = true;
         this.requestMove = undefined;
+        this.allowInput = true;
+        this.hideMenu();
+        this.drawLayers[this.COINS].visible(true);
+        this.stage.opacity(STAGE_OPACITY);
     },
 
     "initMenu":function() {
@@ -741,7 +749,7 @@ Engine.prototype = {
         this.menuLayer = [];
         this.menuLayer[0] = new Kinetic.Layer();
         this.menuLayer[0].add(DATA.imgs['title']);
-        DATA.imgs['title'].x(10);
+        DATA.imgs['title'].x((SHAPE_X - DATA.imgs['title'].width()) / 2);
         DATA.imgs['title'].y(10);
         this.menuLayer[0].add(DATA.imgs['startA']);
         this.menuLayer[0].add(DATA.imgs['startI']);
@@ -765,6 +773,12 @@ Engine.prototype = {
         this.menuLayer[2].add(DATA.imgs['menuCandy2']);
         this.menuLayer[3] = new Kinetic.Layer();
         this.menuLayer[3].add(DATA.imgs['menuCandy3']);
+        DATA.imgs['menuCandy1'].x((SHAPE_X - DATA.imgs['menuCandy1'].width()) / 2);
+        DATA.imgs['menuCandy2'].x((SHAPE_X - DATA.imgs['menuCandy1'].width()) / 2);
+        DATA.imgs['menuCandy3'].x((SHAPE_X - DATA.imgs['menuCandy1'].width()) / 2);
+        DATA.imgs['menuCandy1'].y(70);
+        DATA.imgs['menuCandy2'].y(70);
+        DATA.imgs['menuCandy3'].y(70);
 
         for (var i=0; i<this.menuLayer.length; i++)
             this.stage.add(this.menuLayer[i]);
@@ -882,24 +896,18 @@ Engine.prototype = {
 
             var t = Date.now();
 
-            DATA.imgs['menuCandy1'].x(40);
-            DATA.imgs['menuCandy2'].x(40);
-            DATA.imgs['menuCandy3'].x(40);
-            DATA.imgs['menuCandy1'].y(70);
-            DATA.imgs['menuCandy2'].y(70);
-            DATA.imgs['menuCandy3'].y(70);
             if (t % 3000 < 1100) 
-                this.menuLayer[1].opacity(0.7);
+                this.menuLayer[1].opacity(ACTIVE_OPACITY + BASE_OPACITY);
             else
-                this.menuLayer[1].opacity(0.1);
+                this.menuLayer[1].opacity(BASE_OPACITY);
             if (t % 3000 > 1000 && t % 3000 < 2100)
-                this.menuLayer[2].opacity(0.7);
+                this.menuLayer[2].opacity(ACTIVE_OPACITY + BASE_OPACITY);
             else
-                this.menuLayer[2].opacity(0.1);
+                this.menuLayer[2].opacity(BASE_OPACITY);
             if (t % 3000 > 2000 || t % 3000 < 100)
-                this.menuLayer[3].opacity(0.7);
+                this.menuLayer[3].opacity(ACTIVE_OPACITY + BASE_OPACITY);
             else
-                this.menuLayer[3].opacity(0.1);
+                this.menuLayer[3].opacity(BASE_OPACITY);
 
             for (var i=0;i<this.menuLayer.length;i++)
                 this.menuLayer[i].draw();
@@ -911,6 +919,9 @@ Engine.prototype = {
     "drawLevel": function() {
         if (!MODEL.ready)
             return;
+
+        if (!this.allowInput)
+            this.drawLayers[this.COINS].visible(false);
 
         if (this.ticker % 20 > 9)
             this.lvlGoal.y(MODEL.goal[1] * 42 - 19 + this.ticker % 10);
@@ -942,7 +953,7 @@ Engine.prototype = {
             var aL = MODEL.activeLayers();
             
             for (var i=0; i<this.drawLayers.length; i++) {
-                this.drawLayers[i].opacity(aL[i] * 0.7 + 0.05);
+                this.drawLayers[i].opacity(aL[i] * ACTIVE_OPACITY + BASE_OPACITY);
             }
             var tween = new Kinetic.Tween({
                 node: this.stage,
@@ -974,6 +985,46 @@ Engine.prototype = {
         }
     },
 
+    "win": function() {
+        this.allowInput = false;
+        for (var i=0; i<this.mobs.length; i++)
+            this.mobs[i].visible(false);
+        var d2 = $.proxy(this, "win2");
+        var tween = new Kinetic.Tween({
+            node: this.stage,
+            duration: 1.55,
+            opacity: 0,
+            easing: Kinetic.Easings.EaseIn
+        });
+        tween.play();
+        setTimeout(d2, 2000);
+    },
+
+    "win2": function() {
+        this.nextLevel();
+        this.reset();
+
+    },
+
+    "death": function() {
+        this.allowInput = false;
+        var d2 = $.proxy(this, "death2");
+        var tween = new Kinetic.Tween({
+            node: this.stage,
+            duration: 0.95,
+            opacity: 0,
+            easing: Kinetic.Easings.EaseIn
+        });
+        tween.play();
+        setTimeout(d2, 1300);
+
+    },
+
+    "death2": function() {
+
+        MODEL.restart();
+        this.reset();
+    },
     "update": function() {
         if (DATA.loaded) {
             if (this.inMenus) {
@@ -1047,30 +1098,27 @@ Engine.prototype = {
                 if (MODEL.isWinning()) {
                     console.log("Won");
                     DATA.snds["completed"].play();
-                    this.nextLevel();
-                    this.reset();
+                    this.win();
+                    return;
                 }
 
                 if (!MODEL.isValidPosition()) {
                     console.log("Fell off");
-                    MODEL.restart();
-                    this.reset();
+                    this.death();
                     return;
                 }
 
                 if (MODEL.isCaught()) {
                     console.log("Caught");
                     DATA.snds["caught"].play();
-                    MODEL.restart();
-                    this.reset();
+                    this.death();
                     return;
                 }
 
                 if (this.curCoins <= 0) {
                     console.log("Starved");
                     DATA.snds["starved"].play();
-                    MODEL.restart();
-                    this.reset();
+                    this.death();
                     return;
                 }
 
@@ -1156,7 +1204,7 @@ function checkKey(ev) {
     else if (code == LEFT || code == 65)
         e.requestMove = LEFT;
     else if (code == 82)
-        MODEL.restart();
+        e.death2();
     else if (code == 77)
         DATA.snds["level"].muted = !DATA.snds["level"].muted;
     else if (code == 80 || code == 27)

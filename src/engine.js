@@ -445,7 +445,7 @@ Model.prototype =
 
         for (var i in this.mobs)
         {
-            if (this.allowedLayers.indexOf(this.mobs[i].getPos()[0]) >= 0 &&
+            if (//this.allowedLayers.indexOf(this.mobs[i].getPos()[0]) >= 0 &&
                     this.player[1] == this.mobs[i].getPos()[1]
                     && this.player[2] == this.mobs[i].getPos()[2])
             {

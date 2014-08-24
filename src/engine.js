@@ -852,35 +852,6 @@ Engine.prototype = {
 
             } else if (MODEL.ready) {
 
-                if (MODEL.isWinning()) {
-                    console.log("Won");
-                    DATA.snds["completed"].play();
-                    this.reset();
-                    this.nextLevel();
-                }
-
-                if (!MODEL.isValidPosition()) {
-                    console.log("Fell off");
-                    this.reset();
-                    MODEL.restart();
-                    return;
-                }
-
-                if (MODEL.isCaught()) {
-                    console.log("Caught");
-                    DATA.snds["caught"].play();
-                    this.reset();
-                    MODEL.restart();
-                    return;
-                }
-
-                if (this.curCoins <= 0) {
-                    console.log("Starved");
-                    DATA.snds["starved"].play();
-                    this.reset();
-                    MODEL.restart();
-                }
-
                 if (MODEL.ready) {
                     if (this.playing && this.ticker % 11 == 0)
                         this.curCoins --;
@@ -931,6 +902,36 @@ Engine.prototype = {
                     }
                     
                 }
+
+                if (MODEL.isWinning()) {
+                    console.log("Won");
+                    DATA.snds["completed"].play();
+                    this.reset();
+                    this.nextLevel();
+                }
+
+                if (!MODEL.isValidPosition()) {
+                    console.log("Fell off");
+                    this.reset();
+                    MODEL.restart();
+                    return;
+                }
+
+                if (MODEL.isCaught()) {
+                    console.log("Caught");
+                    DATA.snds["caught"].play();
+                    this.reset();
+                    MODEL.restart();
+                    return;
+                }
+
+                if (this.curCoins <= 0) {
+                    console.log("Starved");
+                    DATA.snds["starved"].play();
+                    this.reset();
+                    MODEL.restart();
+                }
+
             }
         } else {
             

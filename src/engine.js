@@ -605,7 +605,10 @@ Engine.prototype = {
     },
 
     "showMenu": function() {
-        this.menuLayer.visible(true);
+
+        for (var i=0; i<this.menuLayer.length; i++)
+            this.menuLayer[i].visible(true);
+
         for (var i=0; i<this.drawLayers.length; i++)
             this.drawLayers[i].visible(false);
         this.inMenus = true;
@@ -615,9 +618,13 @@ Engine.prototype = {
     },
 
     "hideMenu": function() {
-        this.menuLayer.visible(false);
+
+        for (var i=0; i<this.menuLayer.length; i++)
+            this.menuLayer[i].visible(false);
+
         for (var i=0; i<this.drawLayers.length; i++)
             this.drawLayers[i].visible(true);
+
         this.inMenus = false;
         this.moved = true;
 
@@ -705,27 +712,36 @@ Engine.prototype = {
 
     "initMenu":function() {
 
-        this.menuLayer = new Kinetic.Layer();
-        this.menuLayer.add(DATA.imgs['title']);
+        this.menuLayer = [];
+        this.menuLayer[0] = new Kinetic.Layer();
+        this.menuLayer[0].add(DATA.imgs['title']);
         DATA.imgs['title'].x(10);
         DATA.imgs['title'].y(10);
-        this.menuLayer.add(DATA.imgs['startA']);
-        this.menuLayer.add(DATA.imgs['startI']);
+        this.menuLayer[0].add(DATA.imgs['startA']);
+        this.menuLayer[0].add(DATA.imgs['startI']);
         DATA.imgs['startA'].x(100);
         DATA.imgs['startA'].y(300);
         DATA.imgs['startI'].x(100);
         DATA.imgs['startI'].y(300);
-        this.menuLayer.add(DATA.imgs['resumeA']);
-        this.menuLayer.add(DATA.imgs['resumeI']);
+        this.menuLayer[0].add(DATA.imgs['resumeA']);
+        this.menuLayer[0].add(DATA.imgs['resumeI']);
         DATA.imgs['resumeA'].x(100);
         DATA.imgs['resumeA'].y(250);
         DATA.imgs['resumeI'].x(100);
         DATA.imgs['resumeI'].y(250);
         this.menuBeetle = DATA.imgs['player'].clone({x: 70, y: 260});
         this.menuBeetle.start();
-        this.menuLayer.add(this.menuBeetle);
+        this.menuLayer[0].add(this.menuBeetle);
 
-        this.stage.add(this.menuLayer);
+        this.menuLayer[1] = new Kinetic.Layer();
+        this.menuLayer[1].add(DATA.imgs['menuCandy1']);
+        this.menuLayer[2] = new Kinetic.Layer();
+        this.menuLayer[2].add(DATA.imgs['menuCandy2']);
+        this.menuLayer[3] = new Kinetic.Layer();
+        this.menuLayer[3].add(DATA.imgs['menuCandy3']);
+
+        for (var i=0; i<this.menuLayer.length; i++)
+            this.stage.add(this.menuLayer[i]);
 
         DATA.snds['level'].addEventListener("ended", function() {
                 this.currentTime = 0;
@@ -837,7 +853,30 @@ Engine.prototype = {
             } else {
                 this.menuBeetle.y(260);
             }
-            this.menuLayer.draw();
+
+            var t = Date.now();
+
+            DATA.imgs['menuCandy1'].x(40);
+            DATA.imgs['menuCandy2'].x(40);
+            DATA.imgs['menuCandy3'].x(40);
+            DATA.imgs['menuCandy1'].y(70);
+            DATA.imgs['menuCandy2'].y(70);
+            DATA.imgs['menuCandy3'].y(70);
+            if (t % 3000 < 1100) 
+                this.menuLayer[1].opacity(0.7);
+            else
+                this.menuLayer[1].opacity(0.1);
+            if (t % 3000 > 1000 && t % 3000 < 2100)
+                this.menuLayer[2].opacity(0.7);
+            else
+                this.menuLayer[2].opacity(0.1);
+            if (t % 3000 > 2000 || t % 3000 < 100)
+                this.menuLayer[3].opacity(0.7);
+            else
+                this.menuLayer[3].opacity(0.1);
+
+            for (var i=0;i<this.menuLayer.length;i++)
+                this.menuLayer[i].draw();
         } else {
             this.initMenu();
         }
@@ -1057,7 +1096,8 @@ Engine.prototype = {
                 ["resumeI", "img/resumeInactive.png"],
                 ["resumeA", "img/resumeActive.png"],
                 ["menuCandy1", "img/menuCandy1.png"],
-                ["menuCandy2", "img/menuCandy2.png"]]);
+                ["menuCandy2", "img/menuCandy2.png"],
+                ["menuCandy3", "img/menuCandy3.png"]]);
 
         this.loadSounds([
                 ["coin", "sound/coin"],
@@ -1097,9 +1137,10 @@ function checkKey(ev) {
         e.showMenu();
     else if (code == ENTER)
         e.requestMove = ENTER;
-    else 
+    else {
         console.log(code);
-
+        return true;
+    }
     ev.preventDefault();
     return false;
 }

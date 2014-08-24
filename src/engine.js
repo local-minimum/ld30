@@ -273,6 +273,7 @@ Model.prototype =
                 this.coins[y][x] = 1;
             }
         }
+        var t = Date.now();
         this._coins[this.player[1]][this.player[2]] = t;
         this._coins[this.goal[1]][this.goal[2]] = t;
         this.coins[this.player[1]][this.player[2]] = 0;

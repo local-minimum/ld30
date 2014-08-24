@@ -47,7 +47,7 @@ h2 {
 }
 #gameStatus {
     height: 2em;
-    width: 400px;
+    width: 600px;
     padding: 10px;
     background-color: #5e0000;
     font-size: 70%;
@@ -55,7 +55,8 @@ h2 {
 
 #game {
     background: #fff;
-    width: 400px;
+    width: 600px;
+    height: 600px;
     padding: 10px;
 }
 
@@ -93,7 +94,7 @@ h2 {
 }
 
 #inner {
-    width:420px;
+    width:620px;
     margin:30px auto;
 }
 

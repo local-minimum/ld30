@@ -610,6 +610,8 @@ Engine.prototype = {
             this.drawLayers[i].visible(false);
         this.inMenus = true;
         this.menuStart = this.curLevel == 0;
+        this.stage.offsetX(0);
+        this.stage.offsetY(0);
     },
 
     "hideMenu": function() {
@@ -617,6 +619,7 @@ Engine.prototype = {
         for (var i=0; i<this.drawLayers.length; i++)
             this.drawLayers[i].visible(true);
         this.inMenus = false;
+        this.moved = true;
 
     },
 

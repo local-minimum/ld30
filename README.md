@@ -12,8 +12,6 @@ bring them all together again.
 TODO
 ----
 
-* MUSIC: Menu theme
-* CODE: Menu (Continue, Restart, Music On/Off, Effects On/Off)
 * CODE: Effect when death
 * CODE: Effect when goal
 * CODE: Loading game screen
@@ -21,6 +19,8 @@ TODO
 DONE
 ----
 
+* MUSIC: Menu theme
+* CODE: Menu (Continue, Restart, Music On/Off, Effects On/Off)
 * MUSIC: Level theme
 * CODE: In level report coins and total coins so far (should penalty for death?)
 * SOUND: Gather coin

@@ -529,7 +529,7 @@ var MODEL = new Model();
 var DATA = {
     "_loaded" : false,
     "_parts": 0,
-    "_total": 19,
+    "_total": 20,
     "imgs" : new Array(),
     "snds" : new Array()
 
@@ -596,6 +596,16 @@ function Engine() {
     this.moved = false;
     this.movedMob = false;
     this.menuLayer = undefined;
+    this.loadingWedge = new Kinetic.Wedge({
+        x: SHAPE_X / 2,
+        y: SHAPE_Y / 2,
+        radius: (SHAPE_Y + SHAPE_X) / 6,
+        angle: 0,
+        fill: '#530000',
+        stroke: '#f24f00',
+        strokeWidth: 4,
+        rotation: -120});
+    this.loadingLayer = new Kinetic.Layer();
     this.menuBeetle = undefined;
     this.menuStart = true;
     this.allowInput = true;
@@ -746,6 +756,7 @@ Engine.prototype = {
 
     "initMenu":function() {
 
+        this.loadingLayer.visible(false);
         this.menuLayer = [];
         this.menuLayer[0] = new Kinetic.Layer();
         this.menuLayer[0].add(DATA.imgs['title']);
@@ -797,7 +808,7 @@ Engine.prototype = {
 
     "initLevel" : function() {
 
-        if (!DATA.loaded) {
+        if (!DATA.loaded()) {
             return;
         }
 
@@ -881,7 +892,8 @@ Engine.prototype = {
     },
 
     "drawLoading": function() {
-        //this.ctx.fillRect(10, 10, 300 * DATA.loading(), 30);
+        this.loadingWedge.angle(360 * DATA.loading());
+        this.loadingLayer.draw();
     },
 
     "drawMenu": function() {
@@ -975,7 +987,7 @@ Engine.prototype = {
     },
 
     "draw" : function() {
-        if (DATA.loaded) {
+        if (DATA.loaded()) {
             if (this.inMenus)
                 this.drawMenu();
             else
@@ -1027,7 +1039,7 @@ Engine.prototype = {
         this.reset();
     },
     "update": function() {
-        if (DATA.loaded) {
+        if (DATA.loaded()) {
             if (this.inMenus) {
 
                 if (this.requestMove == ENTER) {
@@ -1132,14 +1144,18 @@ Engine.prototype = {
     },
 
     "start" : function() {
+
         this.stage = new Kinetic.Stage({
             container: 'game',
             width: SHAPE_X,
             height: SHAPE_Y
         });
 
-        var staticLayer = new Kinetic.Layer();
-        this.stage.add(staticLayer);
+        this.loadingLayer.add(new Kinetic.Text(
+            {x: 10, y: 10, text: "LOADING...",
+                stroke: "#5e0000", fontSize: 20}));
+        this.loadingLayer.add(this.loadingWedge);
+        this.stage.add(this.loadingLayer);
 
         this.loadImages([
                 //DATA-key, src, width, heigh

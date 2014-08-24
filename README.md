@@ -1,5 +1,5 @@
-TBD
-===
+Little Beetle Saves The World
+=============================
 
 The world has separated onto three planes.
 Scattered piecies of what once was a comforting and
@@ -12,7 +12,7 @@ bring them all together again.
 TODO
 ----
 
-* CODE: Loading game screen
+* CSS: Variables for game area?
 
 DONE
 ----

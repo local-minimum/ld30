@@ -1099,6 +1099,9 @@ function checkKey(ev) {
         e.requestMove = ENTER;
     else 
         console.log(code);
+
+    ev.preventDefault();
+    return false;
 }
 
 $(document).keydown (checkKey);

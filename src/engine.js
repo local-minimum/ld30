@@ -16,6 +16,7 @@ var DOWN = 40;
 var UP = 38;
 var LEFT = 37;
 var RIGHT = 39;
+var ENTER = 13;
 
 function Mob()
 {
@@ -588,13 +589,15 @@ function Engine() {
     this.moved = false;
     this.movedMob = false;
     this.menuLayer = undefined;
+    this.menuBeetle = undefined;
+    this.menuStart = true;
 }
 
 Engine.prototype = {
     
     "loadLevel": function(lvl) {
         MODEL.ready = false;
-        MODEL.onLevelCallback = $.proxy(this, "initMenu");
+        MODEL.onLevelCallback = $.proxy(this, "initLevel");
         $.getJSON("data/lvl" + lvl + ".json", function(response) {
             MODEL.setLevel(response);
         }).error(function() { alert("Could not load level " + lvl); });
@@ -602,7 +605,18 @@ Engine.prototype = {
     },
 
     "showMenu": function() {
+        this.menuLayer.visible(true);
+        for (var i=0; i<this.drawLayers.length; i++)
+            this.drawLayers[i].visible(false);
         this.inMenus = true;
+        this.menuStart = this.curLevel == 0;
+    },
+
+    "hideMenu": function() {
+        this.menuLayer.visible(false);
+        for (var i=0; i<this.drawLayers.length; i++)
+            this.drawLayers[i].visible(true);
+        this.inMenus = false;
 
     },
 
@@ -687,10 +701,37 @@ Engine.prototype = {
     },
 
     "initMenu":function() {
+
         this.menuLayer = new Kinetic.Layer();
         this.menuLayer.add(DATA.imgs['title']);
         DATA.imgs['title'].x(10);
         DATA.imgs['title'].y(10);
+        this.menuLayer.add(DATA.imgs['startA']);
+        this.menuLayer.add(DATA.imgs['startI']);
+        DATA.imgs['startA'].x(100);
+        DATA.imgs['startA'].y(300);
+        DATA.imgs['startI'].x(100);
+        DATA.imgs['startI'].y(300);
+        this.menuLayer.add(DATA.imgs['resumeA']);
+        this.menuLayer.add(DATA.imgs['resumeI']);
+        DATA.imgs['resumeA'].x(100);
+        DATA.imgs['resumeA'].y(250);
+        DATA.imgs['resumeI'].x(100);
+        DATA.imgs['resumeI'].y(250);
+        this.menuBeetle = DATA.imgs['player'].clone({x: 70, y: 260});
+        this.menuBeetle.start();
+        this.menuLayer.add(this.menuBeetle);
+
+        this.stage.add(this.menuLayer);
+
+        DATA.snds['level'].addEventListener("ended", function() {
+                this.currentTime = 0;
+                this.play();
+                }, false);
+
+        DATA.snds['level'].play();
+
+        console.log("Menu ready");
 
     },
 
@@ -775,13 +816,6 @@ Engine.prototype = {
 
         $("#lvl").html("Level " + this.curLevel + ": " + MODEL.name);
 
-        DATA.snds['level'].addEventListener("ended", function() {
-                this.currentTime = 0;
-                this.play();
-                }, false);
-
-        DATA.snds['level'].play();
-
         this.reset();
         this.levelStartTime = Date.now();
     },
@@ -791,8 +825,19 @@ Engine.prototype = {
     },
 
     "drawMenu": function() {
-        if (this.menuLayer)
+        if (this.menuLayer) {
+            DATA.imgs["resumeI"].visible(this.curLevel > 0 && this.menuStart);
+            DATA.imgs["resumeA"].visible(this.curLevel > 0);
+            DATA.imgs["startI"].visible(!this.menuStart)
+            if (this.menuStart) {
+                this.menuBeetle.y(310);
+            } else {
+                this.menuBeetle.y(260);
+            }
             this.menuLayer.draw();
+        } else {
+            this.initMenu();
+        }
     },
 
     "drawLevel": function() {
@@ -864,6 +909,19 @@ Engine.prototype = {
     "update": function() {
         if (DATA.loaded) {
             if (this.inMenus) {
+
+                if (this.requestMove == ENTER) {
+                    if (this.menuStart) {
+                        this.curLevel = 0;
+                        this.nextLevel();
+                    }
+                    this.hideMenu();
+                } else if (this.requestMove == UP || this.requestMove == DOWN) {
+                    if (this.curLevel > 0)
+                        this.menuStart = !this.menuStart;
+                }
+
+                this.requestMove = undefined;
 
             } else if (MODEL.ready) {
 
@@ -1005,10 +1063,6 @@ Engine.prototype = {
                 ["completed", "sound/lvlCompleted"],
                 ["level", "sound/aRunningPuppy"]]);
         
-        //TODO: A hack to load first level
-        var f1 = $.proxy(this, "nextLevel");
-        setTimeout(f1, 200)
-
         this.coinsText = $("#shards");
 
         //Setting up callbacks
@@ -1024,13 +1078,13 @@ var e = new Engine();
 e.start();
 function checkKey(ev) {    
     var code = ev.keyCode || ev.witch;
-    if (code == UP)
+    if (code == UP || code == 87)
         e.requestMove = UP;
-    else if (code == RIGHT)
+    else if (code == RIGHT || code == 68)
         e.requestMove = RIGHT;
-    else if (code == DOWN)
+    else if (code == DOWN || code == 83)
         e.requestMove = DOWN;
-    else if (code == LEFT)
+    else if (code == LEFT || code == 65)
         e.requestMove = LEFT;
     else if (code == 82)
         MODEL.restart();
@@ -1038,6 +1092,8 @@ function checkKey(ev) {
         DATA.snds["level"].muted = !DATA.snds["level"].muted;
     else if (code == 80 || code == 27)
         e.showMenu();
+    else if (code == ENTER)
+        e.requestMove = ENTER;
     else 
         console.log(code);
 }

@@ -18,12 +18,10 @@ TODO
 * CODE: Loading game screen
 * CODE: Level progression and return to menu when done
 * CODE: Animate character
-* CODE: Animate enemy
 * CODE: Scroll between positions
-* GRAPHICS: Draw coins
-* GRAPHICS: Draw platforms
+* CODE: Fine-tune update frequencies and when to check collision
+* CODE: Add cache() to images...
 * GRAPHICS: Draw goal
-* GRAPHICS: Draw enemy
 * GRAPHICS: Draw un-bound enemy
 
 DONE
@@ -35,3 +33,7 @@ DONE
 * SOUND: Death by enemy
 * SOUND: Death by starvation
 * SOUND: Reach goal
+* GRAPHICS: Draw coins
+* GRAPHICS: Draw platforms
+* GRAPHICS: Draw enemy
+* CODE: Animate enemy

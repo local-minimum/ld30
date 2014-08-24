@@ -11,10 +11,6 @@ Just enough to traverse it.
 TODO
 ----
 
-* SOUND: Gather coin
-* SOUND: Death by enemy
-* SOUND: Death by starvation
-* SOUND: Reach goal
 * MUSIC: Level theme
 * MUSIC: Menu theme
 * CODE: Menu (Continue, Restart, Music On/Off, Effects On/Off)
@@ -31,3 +27,11 @@ TODO
 * GRAPHICS: Draw goal
 * GRAPHICS: Draw enemy
 * GRAPHICS: Draw un-bound enemy
+
+DONE
+----
+
+* SOUND: Gather coin
+* SOUND: Death by enemy
+* SOUND: Death by starvation
+* SOUND: Reach goal

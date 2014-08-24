@@ -528,8 +528,8 @@ var MODEL = new Model();
 
 var DATA = {
     "_loaded" : false,
-    "_parts": 0,
-    "_total": 20,
+    "parts": 0,
+    "total": 20,
     "imgs" : new Array(),
     "snds" : new Array()
 
@@ -543,7 +543,7 @@ DATA.loaded = function() {
 }
 
 DATA.loading = function() {
-    return DATA._parts / DATA._total;
+    return DATA.parts / DATA.total;
 }
 
 /*
@@ -684,7 +684,7 @@ Engine.prototype = {
         for (var i=0; i<imageArray.length; i++) {
             var imageObj = new Image();
             imageObj.onload = function() {
-                DATA._parts++;
+                DATA.parts++;
             }
 
             if (imageArray[i].length == 2) {
@@ -719,12 +719,14 @@ Engine.prototype = {
                 suffix = ".mp3";
             else if ((new Audio()).canPlayType("audio/wav") != "")
                 suffix = ".wav";
+            else
+                DATA.total --;
 
         }
         for (var i=0; i<sndsArray.length; i++) {
             DATA.snds[sndsArray[i][0]] = new Audio(sndsArray[i][1] + suffix);
             DATA.snds[sndsArray[i][0]].addEventListener(
-                    'canplaythrough', function() {DATA._parts++;}, false);
+                    'canplaythrough', function() {DATA.parts++;}, false);
         }
     },
 
@@ -1157,7 +1159,7 @@ Engine.prototype = {
         this.loadingLayer.add(this.loadingWedge);
         this.stage.add(this.loadingLayer);
 
-        this.loadImages([
+        var imgs = [
                 //DATA-key, src, width, heigh
                 [0, "img/c0.png"],
                 [1, "img/c1.png"],
@@ -1188,14 +1190,20 @@ Engine.prototype = {
                 ["resumeA", "img/resumeActive.png"],
                 ["menuCandy1", "img/menuCandy1.png"],
                 ["menuCandy2", "img/menuCandy2.png"],
-                ["menuCandy3", "img/menuCandy3.png"]]);
+                ["menuCandy3", "img/menuCandy3.png"]];
 
-        this.loadSounds([
+        var snds = [
                 ["coin", "sound/coin"],
                 ["caught", "sound/caught"],
                 ["starved", "sound/starved"],
                 ["completed", "sound/lvlCompleted"],
-                ["level", "sound/aRunningPuppy"]]);
+                ["level", "sound/aRunningPuppy"]];
+
+
+        DATA.total = imgs.length + snds.length;
+
+        this.loadImages(imgs);
+        this.loadSounds(snds);
         
         this.coinsText = $("#shards");
 

@@ -547,6 +547,7 @@ function Engine() {
     this.coinDelta = 4500;
     this.curCoins = 50;
     this.coinsText = undefined;
+    this.lvlGoal = undefined;
 }
 
 Engine.prototype = {
@@ -668,11 +669,20 @@ Engine.prototype = {
             this.coins.push([]);
             for (var x=0; x<MODEL.coins[0].length; x++) {
                 this.coins[y].push(DATA.imgs["coin"].clone({
-                    x: x * 64 + 26, y: y * 42 + 8}));
+                    x: x * 64 + 20, y: y * 42 + 4}));
                 this.drawLayers[this.COINS].add(this.coins[y][x]);
                 this.coins[y][x].visible(MODEL.coins[y][x] == 1);
             }
         }
+
+        if (!this.lvlGoal)
+            this.lvlGoal = DATA.imgs['goal'].clone({
+                x: MODEL.goal[2]*64 + 20, y: MODEL.goal[1]*42 - 10});
+        else {
+            this.lvlGoal.x(MODEL.goal[2]*64 + 20);
+            this.lvlGoal.y(MODEL.goal[1]*42 - 10);
+        }
+        this.drawLayers[this.COINS].add(this.lvlGoal);
 
         //HANDLE MOVABLES
         if (this.drawLayers.length < this.MOVABLES + 1) {
@@ -739,9 +749,14 @@ Engine.prototype = {
 
         for (var i=0; i<MODEL.mobs.length; i++) {
             var mobP = MODEL.mobs[i].getPos();
-            this.mobs[i].x(mobP[2] * 64 + 5);
-            this.mobs[i].y(mobP[1] * 42 - 10);
+            this.mobs[i].x(mobP[2] * 64 + 15);
+            this.mobs[i].y(mobP[1] * 42 - 7);
         }
+
+        if (this.ticker % 20 > 9)
+            this.lvlGoal.y(MODEL.goal[1] * 42 - 19 + this.ticker % 10);
+        else
+            this.lvlGoal.y(MODEL.goal[1] * 42 - 10 - this.ticker % 10);
 
         this.offsetY = (MODEL.height - MODEL.player[1]) * 42 - 200;
         this.offsetX = (MODEL.width - MODEL.player[0]) * 64 - 200;
@@ -867,6 +882,7 @@ Engine.prototype = {
                 [1, "img/c1.png"],
                 [2, "img/c2.png"],
                 ["player", "img/player.png"],
+                ["goal", "img/goal.png"],
                 ["mob", "img/mob.png", {animations: {
                     standing: [
                         0, 0, 27, 31,

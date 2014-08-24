@@ -127,6 +127,12 @@ function Model()
 
     this.startRotation = undefined;
 
+    /*
+     * Level name
+     * */
+
+    this.name;
+
 }
 
 Model.prototype = 
@@ -151,6 +157,9 @@ Model.prototype =
         this.player = lvlData.start;
         this.goal = lvlData.goal;
         this.startRotation = lvlData.startRotation;
+        this.name = lvlData.name;
+        if (!this.name)
+            this.name = "";
 
         this._setAllowedLayers();
         
@@ -751,23 +760,8 @@ Engine.prototype = {
             this.drawLayers[this.MOVABLES].add(this.mobs[i]);
             };
         
-        //HANDLE UI
-        /*
-        if (this.UI) {
-            this.UI.destroyChildren();
-        } else {
-            this.UI = new Kinetic.Layer();
-            this.stage.add(this.UI);
-        }
-        this.coinsText = new Kinetic.Text({
-            x: 10,
-            y: 10,
-            text: "Shards: " + this.curCoins,
-            fontSize: 30,
-            color: "black",
-            fontFamily: "serif"});
-        this.UI.add(this.coinsText);
-        */
+
+        $("#lvl").html("Level " + this.curLevel + ": " + MODEL.name);
 
         DATA.snds['level'].addEventListener("ended", function() {
                 this.currentTime = 0;
@@ -822,8 +816,16 @@ Engine.prototype = {
             var aL = MODEL.activeLayers();
             
             for (var i=0; i<this.drawLayers.length; i++) {
-                this.drawLayers[i].offsetX(this.offsetX); 
-                this.drawLayers[i].offsetY(this.offsetY); 
+                var tween = new Kinetic.Tween({
+                    node: this.drawLayers[i],
+                    offsetX: this.offsetX,
+                    offsetY: this.offsetY,
+                    duration: 0.03*3,
+                    easing: Kinetic.Easings.EaseInOut
+                });
+                tween.play();
+                //this.drawLayers[i].offsetX(this.offsetX); 
+                //this.drawLayers[i].offsetY(this.offsetY); 
                 this.drawLayers[i].opacity(aL[i] * 0.7 + 0.05);
             }
             this.moved = false;
@@ -906,30 +908,31 @@ Engine.prototype = {
                 if (MODEL.isWinning()) {
                     console.log("Won");
                     DATA.snds["completed"].play();
-                    this.reset();
                     this.nextLevel();
+                    this.reset();
                 }
 
                 if (!MODEL.isValidPosition()) {
                     console.log("Fell off");
-                    this.reset();
                     MODEL.restart();
+                    this.reset();
                     return;
                 }
 
                 if (MODEL.isCaught()) {
                     console.log("Caught");
                     DATA.snds["caught"].play();
-                    this.reset();
                     MODEL.restart();
+                    this.reset();
                     return;
                 }
 
                 if (this.curCoins <= 0) {
                     console.log("Starved");
                     DATA.snds["starved"].play();
-                    this.reset();
                     MODEL.restart();
+                    this.reset();
+                    return;
                 }
 
             }
@@ -992,7 +995,7 @@ Engine.prototype = {
         var f = $.proxy(this, "draw");
         window.setInterval(f, 31);
         var f2 = $.proxy(this, "update");
-        window.setInterval(f2, 31);
+        window.setInterval(f2, 33);
 
     }
 }

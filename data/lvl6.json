@@ -26,6 +26,7 @@
     "coins": 20,
     "start": [0, 4, 0],
     "startRotation": "UP",
+    "name": "Small but sweet",
     "goal": [0, 2, 2],
     "enemies":
     [

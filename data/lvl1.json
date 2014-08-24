@@ -18,6 +18,7 @@
     "coins": 10,
     "start": [0, 2, 0],
     "goal": [2, 0, 4],
+    "name": "Walking the fragments",
     "startRotation": "RIGHT",
     "enemies": []
 }

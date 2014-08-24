@@ -46,6 +46,7 @@
 	"start": [0, 11, 1],
 	"goal": [1, 0, 10],
     "startRotation": "RIGHT",
+    "name": "A-drift and in pieces",
 	"enemies": [
 		{
 			"type": "Bounce",

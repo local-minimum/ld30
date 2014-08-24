@@ -578,13 +578,29 @@ Engine.prototype = {
             imageObj.onload = function() {
                 DATA._parts++;
             }
-            DATA.imgs[imageArray[i][0]] = new Kinetic.Image( {
-                x: 0,
-                y: 0,
-                image: imageObj,
-                draggable: false});
-            imageObj.src = imageArray[i][1]
 
+            if (imageArray[i].length == 2) {
+                DATA.imgs[imageArray[i][0]] = new Kinetic.Image( {
+                    x: 0,
+                    y: 0,
+                    image: imageObj,
+                    draggable: false});
+            } else {
+                var struct = {
+                    x: 0,
+                    y: 0,
+                    frameIndex: 0,
+                    frameRate: 7,
+                    image: imageObj,
+                    animation: 'default'
+                }
+                for (var key in imageArray[i][2])
+                    struct[key] = imageArray[i][2][key];
+
+                DATA.imgs[imageArray[i][0]] = new Kinetic.Sprite(struct);
+            }
+            imageObj.src = imageArray[i][1]
+            //DATA.imgs[imageArray[i][0]].cache();
         }
     },
 
@@ -674,6 +690,7 @@ Engine.prototype = {
             var mPos = MODEL.mobs[i].getPos();
             this.mobs[i] = DATA.imgs["mob"].clone({
                 x: mPos[2]*64, y: mPos[1] * 42});
+            this.mobs[i].start();
             this.drawLayers[this.MOVABLES].add(this.mobs[i]);
             };
         
@@ -850,7 +867,15 @@ Engine.prototype = {
                 [1, "img/c1.png"],
                 [2, "img/c2.png"],
                 ["player", "img/player.png"],
-                ["mob", "img/mob.png"],
+                ["mob", "img/mob.png", {animations: {
+                    standing: [
+                        0, 0, 27, 31,
+                        27, 0, 32, 31,
+                        60, 0, 26, 31
+                    ]},
+                    frameRate: 7,
+                    animation: 'standing'
+                    }],
                 ["coin", "img/coin.png"]]);
 
         this.loadSounds([

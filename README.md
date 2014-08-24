@@ -15,10 +15,8 @@ TODO
 * SOUND: Death by enemy
 * SOUND: Death by starvation
 * SOUND: Reach goal
-
 * MUSIC: Level theme
 * MUSIC: Menu theme
-
 * CODE: Menu (Continue, Restart, Music On/Off, Effects On/Off)
 * CODE: Effect when death
 * CODE: Effect when goal
@@ -28,7 +26,6 @@ TODO
 * CODE: Animate character
 * CODE: Animate enemy
 * CODE: Scroll between positions
-
 * GRAPHICS: Draw coins
 * GRAPHICS: Draw platforms
 * GRAPHICS: Draw goal

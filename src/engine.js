@@ -572,9 +572,12 @@ function Engine() {
     this.requestColor = undefined;
     this.levelStartTime = undefined;
     this.coinDelta = 4500;
+    this.playing = false;
     this.curCoins = 50;
     this.coinsText = undefined;
     this.lvlGoal = undefined;
+    this.moved = false;
+    this.movedMob = false;
 }
 
 Engine.prototype = {
@@ -650,6 +653,7 @@ Engine.prototype = {
 
     "reset": function() {
         this.curCoins = MODEL.startCoins;
+        this.playing = false;
 
         if (MODEL.startRotation == "UP")
             this.playerOff = this.playerRotations.UP;
@@ -664,6 +668,8 @@ Engine.prototype = {
         this.player.y(MODEL.player[1] * 42 - this.playerOff.y);
         this.offsetX = this.player.x() + this.playerOff.x - 200;
         this.offsetY = this.player.y() + this.playerOff.y - 200;
+        this.mobMoved = true;
+        this.moved = true;
     },
 
     "initLevel" : function() {
@@ -785,37 +791,42 @@ Engine.prototype = {
         if (!MODEL.ready)
             return;
 
-        this.player.x(MODEL.player[2] * 64 + this.playerOff.x);
-        this.player.y(MODEL.player[1] * 42 - this.playerOff.y);
-
-        for (var i=0; i<MODEL.mobs.length; i++) {
-            var mobP = MODEL.mobs[i].getPos();
-            this.mobs[i].x(mobP[2] * 64 + 15);
-            this.mobs[i].y(mobP[1] * 42 - 7);
-        }
-
         if (this.ticker % 20 > 9)
             this.lvlGoal.y(MODEL.goal[1] * 42 - 19 + this.ticker % 10);
         else
             this.lvlGoal.y(MODEL.goal[1] * 42 - 10 - this.ticker % 10);
 
-        var aL = MODEL.activeLayers();
-        
         for (var y=0; y<MODEL.coins.length; y++) {
             for (var x=0; x<MODEL.coins[0].length; x++) {
                 this.coins[y][x].visible(MODEL.coins[y][x] == 1);
             }
         }
 
-        for (var i=0; i<this.drawLayers.length; i++) {
-            this.drawLayers[i].offsetX(this.offsetX); 
-            this.drawLayers[i].offsetY(this.offsetY); 
-            this.drawLayers[i].opacity(aL[i] * 0.7 + 0.05);
-        }
-
         //this.coinsText.text("Shards: " + this.curCoins);
         this.coinsText.html("Shards: " + this.curCoins);
 
+        if (this.movedMob) {
+            for (var i=0; i<MODEL.mobs.length; i++) {
+                var mobP = MODEL.mobs[i].getPos();
+                this.mobs[i].x(mobP[2] * 64 + 15);
+                this.mobs[i].y(mobP[1] * 42 - 7);
+            }
+            this.movedMob = false;
+        }
+
+        if (this.moved) {
+            this.player.x(MODEL.player[2] * 64 + this.playerOff.x);
+            this.player.y(MODEL.player[1] * 42 - this.playerOff.y);
+
+            var aL = MODEL.activeLayers();
+            
+            for (var i=0; i<this.drawLayers.length; i++) {
+                this.drawLayers[i].offsetX(this.offsetX); 
+                this.drawLayers[i].offsetY(this.offsetY); 
+                this.drawLayers[i].opacity(aL[i] * 0.7 + 0.05);
+            }
+            this.moved = false;
+        }
         for (var i=0; i<this.drawLayers.length; i++)
             this.drawLayers[i].draw()
 
@@ -870,29 +881,39 @@ Engine.prototype = {
                 }
 
                 if (MODEL.ready) {
-                    if (this.ticker % 11 == 0)
+                    if (this.playing && this.ticker % 11 == 0)
                         this.curCoins --;
 
-                    if (this.ticker % 17 == 0)
+                    if (this.ticker % 17 == 0) {
                         MODEL.moveMobs();
+                        this.movedMob = true;
+                    }
 
                     if (this.ticker % 3 == 0) {
 
                         if (this.requestMove == UP) {
                             this.playerOff = this.playerRotations.UP;
+                            this.playing = true;
+                            this.moved = true;
                             MODEL.up();
                         } else if (this.requestMove == DOWN) {
                             this.playerOff = this.playerRotations.DOWN;
+                            this.playing = true;
+                            this.moved = true;
                             MODEL.down();
                         } else if (this.requestMove == LEFT) {
                             this.playerOff = this.playerRotations.LEFT;
+                            this.playing = true;
+                            this.moved = true;
                             MODEL.left();
                         } else if (this.requestMove == RIGHT) {
                             this.playerOff = this.playerRotations.RIGHT;
+                            this.playing = true;
+                            this.moved = true;
                             MODEL.right();
                         }
 
-                        if (this.requestMove) {
+                        if (this.moved) {
 
                             this.offsetX = this.player.x() + this.playerOff.x - 200;
                             this.offsetY = this.player.y() + this.playerOff.y - 200;

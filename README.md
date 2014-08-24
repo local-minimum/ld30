@@ -17,12 +17,9 @@ TODO
 * CODE: Effect when goal
 * CODE: Loading game screen
 * CODE: Level progression and return to menu when done
-* CODE: Animate character
 * CODE: Scroll between positions
 * CODE: Fine-tune update frequencies and when to check collision
-* CODE: Add cache() to images...
 * CODE: Make timer start when first keypress
-* GRAPHICS: Draw goal
 * GRAPHICS: Draw un-bound enemy
 
 DONE
@@ -37,4 +34,6 @@ DONE
 * GRAPHICS: Draw coins
 * GRAPHICS: Draw platforms
 * GRAPHICS: Draw enemy
+* GRAPHICS: Draw goal
 * CODE: Animate enemy
+* CODE: Animate character

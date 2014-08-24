@@ -25,6 +25,12 @@ a {
     color: #a11;
 }
 
+img {
+    display: inline-block;
+    margin-bottom:0px;
+    margin-top:auto;
+}
+
 h1 {
     color: #5e0000;
     margin-top: 1em;

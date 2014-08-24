@@ -12,6 +12,9 @@ $.ajaxSetup({beforeSend: function(xhr){
 }
 });
 
+var SHAPE_X = 400;
+var SHAPE_Y = 400;
+var IN_GAME_SCALE = 1.5;
 var DOWN = 40;
 var UP = 38;
 var LEFT = 37;
@@ -616,6 +619,7 @@ Engine.prototype = {
         this.menuStart = this.curLevel == 0;
         this.stage.offsetX(0);
         this.stage.offsetY(0);
+        this.stage.scale({x:1, y:1});
     },
 
     "hideMenu": function() {
@@ -628,6 +632,7 @@ Engine.prototype = {
 
         this.inMenus = false;
         this.moved = true;
+        this.stage.scale({x:IN_GAME_SCALE, y:IN_GAME_SCALE});
 
     },
 
@@ -638,6 +643,26 @@ Engine.prototype = {
         } else {
             this.curLevel = 0;
             this.showMenu();
+        }
+    },
+
+    "rescale": function(s) {
+
+        if (s == 1)
+            IN_GAME_SCALE = 1;
+        else if (s == 2)
+            IN_GAME_SCALE = 1.25;
+        else if (s == 3)
+            IN_GAME_SCALE = 1.5;
+        else if (s == 4)
+            IN_GAME_SCALE = 2;
+
+        this.offsetX = MODEL.player[2] * 64 + 32 - SHAPE_X / (2 * IN_GAME_SCALE);
+        this.offsetY = MODEL.player[1] * 42 + 21 - SHAPE_Y / (2 * IN_GAME_SCALE);
+
+        if (!this.inMenus) {
+            this.stage.scale({x:IN_GAME_SCALE, y:IN_GAME_SCALE});
+            this.moved = true;
         }
     },
 
@@ -704,8 +729,8 @@ Engine.prototype = {
         this.player.rotation(this.playerOff.rotation);
         this.player.x(MODEL.player[2] * 64 + this.playerOff.x);
         this.player.y(MODEL.player[1] * 42 - this.playerOff.y);
-        this.offsetX = MODEL.player[2] * 64 + 32 - 200;
-        this.offsetY = MODEL.player[1] * 42 + 21 - 200;
+        this.offsetX = MODEL.player[2] * 64 + 32 - SHAPE_X / (2 * IN_GAME_SCALE);
+        this.offsetY = MODEL.player[1] * 42 + 21 - SHAPE_Y / (2 * IN_GAME_SCALE);
         this.mobMoved = true;
         this.moved = true;
         this.requestMove = undefined;
@@ -1003,8 +1028,8 @@ Engine.prototype = {
 
                         if (this.moved) {
 
-                            this.offsetX = MODEL.player[2] * 64 + 32 - 200;
-                            this.offsetY = MODEL.player[1] * 42 + 21 - 200;
+                            this.offsetX = MODEL.player[2] * 64 + 32 - SHAPE_X / (2 * IN_GAME_SCALE);
+                            this.offsetY = MODEL.player[1] * 42 + 21 - SHAPE_Y / (2 * IN_GAME_SCALE);
                             this.player.rotation(this.playerOff.rotation);
 
                             if (MODEL.coinAtPlayer()) {
@@ -1060,8 +1085,8 @@ Engine.prototype = {
     "start" : function() {
         this.stage = new Kinetic.Stage({
             container: 'game',
-            width: 400,
-            height: 400
+            width: SHAPE_X,
+            height: SHAPE_Y
         });
 
         var staticLayer = new Kinetic.Layer();
@@ -1138,6 +1163,14 @@ function checkKey(ev) {
         e.showMenu();
     else if (code == ENTER)
         e.requestMove = ENTER;
+    else if (code == 49)
+        e.rescale(1);
+    else if (code == 50)
+        e.rescale(2);
+    else if (code == 51)
+        e.rescale(3);
+    else if (code == 52)
+        e.rescale(4);
     else {
         console.log(code);
         return true;

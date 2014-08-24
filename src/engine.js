@@ -528,7 +528,7 @@ function Engine() {
     this.UI = undefined;
 
     this.curLevel = 0;    
-    this.maxLevel = 1;
+    this.maxLevel = 10;
     this.inMenus = false;
     this.knownActiveLayers = undefined;
     this.offsetX;

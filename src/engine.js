@@ -493,6 +493,7 @@ var DATA = {
 	"_parts": 0,
 	"_total": 3,
 	"imgs" : new Array(),
+	"snds" : new Array()
 
 };
 
@@ -570,6 +571,22 @@ Engine.prototype = {
 				draggable: false});
 			imageObj.src = imageArray[i][1]
 
+		}
+	},
+
+	"loadSounds" : function(sndsArray) {
+		var suffix = ".wav";
+		if ((new Audio()).canPlayType("audio/wav") == "") {
+			if ((new Audio()).canPlayType("audio/ogg") != "")
+				suffix = ".ogg";
+			else if ((new Audio()).canPlayType("audio/mp3") != "")
+				suffix = ".mp3";
+
+		}
+		for (var i=0; i<sndsArray.length; i++) {
+			DATA.snds[sndsArray[i][0]] = new Audio(sndsArray[i][1] + suffix);
+			DATA.snds[sndsArray[i][0]].addEventListener(
+					'canplaythrough', function() {DATA._parts++;}, false);
 		}
 	},
 
@@ -704,6 +721,7 @@ Engine.prototype = {
 
 				if (MODEL.isWinning()) {
 					console.log("Won");
+					DATA.snds["completed"].play();
 					this.nextLevel();
 				}
 
@@ -715,6 +733,7 @@ Engine.prototype = {
 
 				if (MODEL.isCaught()) {
 					console.log("Caught");
+					DATA.snds["caught"].play();
 					MODEL.restart();
 					return;
 				}
@@ -734,8 +753,10 @@ Engine.prototype = {
 						else if (this.requestMove == RIGHT)
 							MODEL.right();
 						
-						if (MODEL.coinAtPlayer())
+						if (MODEL.coinAtPlayer()) {
+							DATA.snds["coin"].play();
 							this.curCoins ++;
+						}
 
 						MODEL.setCoinsStatus(this.coinDelta);
 						this.requestMove = undefined;
@@ -768,6 +789,12 @@ Engine.prototype = {
 				["player", "img/player.png"],
 				["mob", "img/mob.png"],
 				["coin", "img/coin.png"]]);
+
+		this.loadSounds([
+				["coin", "sound/coin"],
+				["caught", "sound/caught"],
+				["starved", "sound/starved"],
+				["completed", "sound/lvlCompleted"]]);
 		
 		//TODO: A hack to load first level
 		var f1 = $.proxy(this, "nextLevel");

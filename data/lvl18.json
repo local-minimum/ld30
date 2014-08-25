@@ -32,7 +32,7 @@
     "coins": 30,
     "start": [0, 1, 0],
     "startRotation": "RIGHT",
-    "name": "In the scattered worlds old rules were fading fast.",
+    "name": "The world was comming togeather again.",
     "goal": [0, 6, 4],
     "enemies":
     [

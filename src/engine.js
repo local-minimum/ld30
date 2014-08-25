@@ -615,6 +615,7 @@ Engine.prototype = {
     
     "loadLevel": function(lvl) {
         this.curLevel = lvl;
+        $("#tf").attr('src', 'index2.html?lvl='+lvl);
         MODEL.ready = false;
         MODEL.onLevelCallback = $.proxy(this, "initLevel");
         $.getJSON("data/lvl" + lvl + ".json", function(response) {

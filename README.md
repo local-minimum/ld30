@@ -1,6 +1,15 @@
 Little Beetle Saves The World
 =============================
 
+Little Beetle is a HTML5 / CSS / JavaScript game using only
+jQuery and Kinetic.js libraries.
+
+It is hosted at:
+    local-minimum.unknownincubator.com/little_beetle
+
+STORY
+-----
+
 The world has separated onto three planes.
 Scattered piecies of what once was a comforting and
 predictable whole have become a dangerous place to live in.
@@ -13,10 +22,15 @@ TODO
 ----
 
 * CSS: Variables for game area?
+* CODE: Win game sceene
+* GRAPHICS: Add decoration per tile
 
 DONE
 ----
 
+* CODE: TRACKER CODE
+* LVL: Update texts
+* LVL: Revise lvl 3
 * CSS: Make page look nice
 * MUSIC: Menu theme
 * CODE: Menu (Continue, Restart, Music On/Off, Effects On/Off)

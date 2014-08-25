@@ -614,6 +614,7 @@ function Engine() {
 Engine.prototype = {
     
     "loadLevel": function(lvl) {
+        this.curLevel = lvl;
         MODEL.ready = false;
         MODEL.onLevelCallback = $.proxy(this, "initLevel");
         $.getJSON("data/lvl" + lvl + ".json", function(response) {
@@ -652,10 +653,10 @@ Engine.prototype = {
 
     "nextLevel": function() {
         if (this.curLevel < this.maxLevel) {
-            this.curLevel ++;
-            this.loadLevel(this.curLevel);
+            this.loadLevel(this.curLevel + 1);
         } else {
             this.curLevel = 0;
+            this.reset();
             this.showMenu();
         }
     },
@@ -1004,7 +1005,7 @@ Engine.prototype = {
         this.allowInput = false;
         for (var i=0; i<this.mobs.length; i++)
             this.mobs[i].visible(false);
-        var d2 = $.proxy(this, "win2");
+        var d2 = $.proxy(this, "nextLevel");
         var tween = new Kinetic.Tween({
             node: this.stage,
             duration: 1.55,
@@ -1015,9 +1016,7 @@ Engine.prototype = {
         setTimeout(d2, 2000);
     },
 
-    "win2": function() {
-        this.nextLevel();
-        this.reset();
+    "winFinal": function() {
 
     },
 
@@ -1117,11 +1116,13 @@ Engine.prototype = {
                     return;
                 }
 
+                /* This death no longer possible
                 if (!MODEL.isValidPosition()) {
                     console.log("Fell off");
                     this.death();
                     return;
                 }
+                */
 
                 if (MODEL.isCaught()) {
                     console.log("Caught");

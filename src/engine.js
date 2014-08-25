@@ -574,7 +574,7 @@ function Engine() {
     };
     this.playerOff = this.playerRotations.UP;
     this.curLevel = 0;    
-    this.maxLevel = 15;
+    this.maxLevel = 16;
     this.inMenus = true;
     this.knownActiveLayers = undefined;
     this.offsetX;

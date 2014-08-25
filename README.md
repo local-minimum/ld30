@@ -23,11 +23,11 @@ TODO
 
 * CSS: Variables for game area?
 * CODE: Win game sceene
-* GRAPHICS: Add decoration per tile
 
 DONE
 ----
 
+* GRAPHICS: Add decoration per tile
 * CODE: TRACKER CODE
 * LVL: Update texts
 * LVL: Revise lvl 3

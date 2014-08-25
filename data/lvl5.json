@@ -7,7 +7,7 @@
             [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
             [0, 1, 0, 0, 0, 0, 0, 0, 1, 0],
             [1, 1, 1, 1, 1, 0, 0, 0, 1, 0],
-            [0, 0, 0, 1, 0, 0, 1, 1, 1, 0]
+            [1, 0, 0, 1, 0, 0, 1, 1, 1, 0]
         ],
         [
             [0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
@@ -27,10 +27,10 @@
         ]
     ],
     "coins": 25,
-    "start": [0, 4, 0],
+    "start": [0, 5, 0],
     "goal": [2, 0, 5],
-    "startRotation": "RIGHT",
-    "name": "A friendly welcome",
+    "startRotation": "UP",
+    "name": "Stress was the evil cousin of fear.",
     "enemies":
     [
         {

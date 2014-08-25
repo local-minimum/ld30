@@ -656,8 +656,17 @@ Engine.prototype = {
             this.loadLevel(this.curLevel + 1);
         } else {
             this.curLevel = 0;
-            this.reset();
-            this.showMenu();
+            for (var i=0; i<this.drawLayers.length; i++)
+                this.drawLayers[i].destroyChildren();
+            this.stage.scale({x:1, y:1});
+            this.stage.opacity(1);
+            this.stage.offsetX(0);
+            this.stage.offsetY(0);
+
+            this.drawLayers[0].add(DATA.imgs["theEnd"].clone(
+                {x:SHAPE_X / 2 - 200, y: SHAPE_Y / 2 - 200}));
+            var f = $.proxy(this, "winFinal");
+            setTimeout(f, 10000);
         }
     },
 
@@ -1017,7 +1026,8 @@ Engine.prototype = {
     },
 
     "winFinal": function() {
-
+        this.reset();
+        this.showMenu();
     },
 
     "death": function() {
@@ -1191,7 +1201,8 @@ Engine.prototype = {
                 ["resumeA", "img/resumeActive.png"],
                 ["menuCandy1", "img/menuCandy1.png"],
                 ["menuCandy2", "img/menuCandy2.png"],
-                ["menuCandy3", "img/menuCandy3.png"]];
+                ["menuCandy3", "img/menuCandy3.png"],
+                ["theEnd", "img/theEnd.png"]];
 
         var snds = [
                 ["coin", "sound/coin"],

@@ -574,7 +574,7 @@ function Engine() {
     };
     this.playerOff = this.playerRotations.UP;
     this.curLevel = 0;    
-    this.maxLevel = 6;
+    this.maxLevel = 7;
     this.inMenus = true;
     this.knownActiveLayers = undefined;
     this.offsetX;
@@ -662,6 +662,7 @@ Engine.prototype = {
             this.stage.opacity(1);
             this.stage.offsetX(0);
             this.stage.offsetY(0);
+            this.drawLayers[0].opacity(ACTIVE_OPACITY + BASE_OPACITY);
 
             this.drawLayers[0].add(DATA.imgs["theEnd"].clone(
                 {x:SHAPE_X / 2 - 200, y: SHAPE_Y / 2 - 200}));

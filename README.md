@@ -22,11 +22,12 @@ TODO
 ----
 
 * CSS: Variables for game area?
-* CODE: Win game sceene
 
 DONE
 ----
 
+* CODE: Win game sceene
+* GRAPHICS: Menu-candy needs new tiles
 * GRAPHICS: Add decoration per tile
 * CODE: TRACKER CODE
 * LVL: Update texts

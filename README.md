@@ -22,6 +22,16 @@ TODO
 ----
 
 * CSS: Variables for game area?
+* CSS: Large text on shards left indicator
+* CSS/CODE: Flash background on shards left when low on shards (<7?)
+* CSS/CODE: Play low on shards warning every second when low on shards
+* MUSIC: New music please
+* SOUNDS: Master volumes on effects
+* LVL: Make lvl 4 have lots of time
+* LVL: Revise lvl 9?
+* CODE / GRAPHICS: Add a "skip level / loose esteme" button
+* CODE / GRAPHICS: Add a "Regret cheating button"
+* CODE / GRAPHICS: Add "CHEATER" disturbing effect if cheated.
 
 DONE
 ----

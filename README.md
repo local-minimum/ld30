@@ -28,7 +28,7 @@ TODO
 * MUSIC: New music please
 * SOUNDS: Master volumes on effects
 * LVL: Make lvl 4 have lots of time
-* LVL: Revise lvl 9?
+* LVL: Revise lvl 9? to be easier
 * CODE / GRAPHICS: Add a "skip level / loose esteme" button
 * CODE / GRAPHICS: Add a "Regret cheating button"
 * CODE / GRAPHICS: Add "CHEATER" disturbing effect if cheated.

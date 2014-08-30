@@ -7,6 +7,8 @@ jQuery and Kinetic.js libraries.
 It is hosted at:
     local-minimum.unknownincubator.com/little_beetle
 
+And it was originally made for Ludum Dare.
+
 STORY
 -----
 
@@ -32,6 +34,7 @@ TODO
 * CODE / GRAPHICS: Add a "skip level / loose esteme" button
 * CODE / GRAPHICS: Add a "Regret cheating button"
 * CODE / GRAPHICS: Add "CHEATER" disturbing effect if cheated.
+* CODE: Generate codes for getting to level X
 
 DONE
 ----

@@ -23,7 +23,7 @@ bring them all together again.
 TODO
 ----
 
-* CODE / GRAPHICS: Add "CHEATER" disturbing effect if cheated.
+* GRAPHICS: Update tile graphics
 
 SKIP
 ----
@@ -34,6 +34,7 @@ SKIP
 DONE
 ----
 
+* CODE / GRAPHICS: Add "CHEATER" disturbing effect if cheated.
 * HTML: Make only game-relevant info in separate html
 * CODE / GRAPHICS: Add a "skip level / loose esteme" button
 * CODE / GRAPHICS: Add a "Regret cheating button"

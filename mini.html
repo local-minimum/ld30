@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Little Beetle Saves The World</title>
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<script type="text/javascript" src="src/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="src/kinetic-v5.1.0.min.js"></script>
+</head>
+<body>
+<div id="inner">
+    <div id="outerGame">
+        <div id="game"></div>
+        <div id="cheaterButtons">
+            <input type="submit" value="Regret Cheating" class="hiddenElem" id="regretCheat">
+            <input type="submit" value="Cheat/Skip Level" class="hiddenElem" id="cheat">
+        </div>
+    </div>
+    <div id="gameStatus">
+        <div id="lvl"></div>
+        <div id="shards"></div>
+    </div>
+    <div id="jumpTo">
+        <span>Quick Jump-To Code:</span>
+        <input type="text" name="jumpCode" id="jumpCode">
+        <input type="submit" value="Go!" id="jumpAction">
+    </div>
+</div>
+<script type="text/javascript" src="src/engine.js"></script>
+</body>
+</html>
+

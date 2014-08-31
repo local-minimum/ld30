@@ -25,7 +25,6 @@ TODO
 
 * CSS/CODE: Flash background on shards left when low on shards (<7?)
 * CSS/CODE: Play low on shards warning every second when low on shards
-* MUSIC: New music please
 * SOUNDS: Master volumes on effects
 * CODE / GRAPHICS: Add a "skip level / loose esteme" button
 * CODE / GRAPHICS: Add a "Regret cheating button"
@@ -37,6 +36,7 @@ TODO
 DONE
 ----
 
+* MUSIC: New music please
 * CSS: Large text on shards left indicator
 * LVL: Revise lvl 9? to be easier
 * LVL: Make lvl 4 have lots of time

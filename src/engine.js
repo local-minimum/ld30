@@ -1211,7 +1211,7 @@ Engine.prototype = {
                 ["caught", "sound/caught"],
                 ["starved", "sound/starved"],
                 ["completed", "sound/lvlCompleted"],
-                ["level", "sound/aRunningPuppy"]];
+                ["level", "sound/tune"]];
 
 
         DATA.total = imgs.length + snds.length;

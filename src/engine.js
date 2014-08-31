@@ -674,6 +674,20 @@ Engine.prototype = {
         }
     },
 
+    "skipLevel": function() {
+        if (this.curLevel <= 0)
+            return;
+        this.skippedLevels.push(this.curLevel);
+        this.nextLevel();
+    },
+
+    "regretLastSkip": function() {
+        if (this.skippedLevels.length == 0)
+            return;
+
+        this.loadLevel(this.skippedLevels.pop());
+    },
+
     "generateCode": function() {
         var lB = 65;
         var chrs = 23;
@@ -1149,6 +1163,7 @@ Engine.prototype = {
 
     "winFinal": function() {
         this.reset();
+        this.skippedLevels = [];
         this.showMenu();
     },
 
@@ -1178,6 +1193,7 @@ Engine.prototype = {
                 if (this.requestMove == ENTER) {
                     if (this.menuStart) {
                         this.curLevel = 0;
+                        this.skippedLevels = [];
                         this.nextLevel();
                     }
                     this.hideMenu();

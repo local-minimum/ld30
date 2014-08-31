@@ -1186,6 +1186,7 @@ Engine.prototype = {
         MODEL.restart();
         this.reset();
     },
+
     "update": function() {
         if (DATA.loaded()) {
             if (this.inMenus) {

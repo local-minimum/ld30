@@ -25,6 +25,8 @@ var BASE_OPACITY = 0.45;
 var ACTIVE_OPACITY = 0.3;
 var STAGE_OPACITY = 1;
 var JUMP_TO_FUNC = undefined;
+var CHEAT_FUNC = undefined;
+var REGRET_CHEAT_FUNC = undefined;
 
 function Mob()
 {
@@ -688,6 +690,9 @@ Engine.prototype = {
             return;
 
         this.loadLevel(this.skippedLevels.pop());
+
+        if (this.skippedLevels.length == 0)
+            $("#regretCheat").attr("class", "hiddenElem");
     },
 
     "generateCode": function() {
@@ -888,6 +893,15 @@ Engine.prototype = {
         this.moved = true;
         this.requestMove = undefined;
         this.allowInput = true;
+
+        if (this.retries > 3)
+            $("#cheat").attr("class", "");
+        else
+            $("#cheat").attr("class", "hiddenElem");
+
+        if (this.skippedLevels.length > 0)
+            $("#regretCheat").attr("class", "");
+
         this.hideMenu();
         this.drawLayers[this.COINS].visible(true);
         this.stage.opacity(STAGE_OPACITY);
@@ -1165,6 +1179,7 @@ Engine.prototype = {
     "winFinal": function() {
         this.reset();
         this.skippedLevels = [];
+        $("#regretCheat").attr("class", "hiddenElem");
         this.showMenu();
     },
 
@@ -1197,6 +1212,7 @@ Engine.prototype = {
                     if (this.menuStart) {
                         this.curLevel = 0;
                         this.skippedLevels = [];
+                        $("#regretCheat").attr("class", "hiddenElem");
                         this.nextLevel();
                     }
                     this.hideMenu();
@@ -1360,9 +1376,19 @@ Engine.prototype = {
         
         this.coinsText = $("#shards");
         JUMP_TO_FUNC = $.proxy(this, "setStateFromCode");
+        CHEAT_FUNC = $.proxy(this, "skipLevel");
+        REGRET_CHEAT_FUNC = $.proxy(this, "regretLastSkip");
 
         $("#jumpAction").on("click", function() {
             JUMP_TO_FUNC();
+        });
+
+        $("#cheat").on("click", function() {
+            CHEAT_FUNC();
+        });
+
+        $("#regretCheat").on("click", function() {
+            REGRET_CHEAT_FUNC();
         });
 
         //Setting up callbacks

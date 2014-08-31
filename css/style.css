@@ -53,7 +53,24 @@ h2 {
     font-size: 70%;
 }
 
+#outerGame {
+    position: relative;
+}
+
+#cheaterButtons {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+.hiddenElem {
+    visibility: hidden;
+}
+
 #game {
+    position: abolute;
+    top: 0px;
+    left: 0px;
     background: #fff;
     width: 600px;
     height: 500px;

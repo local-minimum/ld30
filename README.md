@@ -34,6 +34,7 @@ SKIP
 DONE
 ----
 
+* HTML: Make only game-relevant info in separate html
 * CODE / GRAPHICS: Add a "skip level / loose esteme" button
 * CODE / GRAPHICS: Add a "Regret cheating button"
 * CODE: Generate codes for getting to level X

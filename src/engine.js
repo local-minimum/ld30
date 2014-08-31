@@ -575,6 +575,7 @@ function Engine() {
     };
     this.playerOff = this.playerRotations.UP;
     this.curLevel = 0;    
+    this.retries = 0;
     this.skippedLevels = new Array();
     this.maxLevel = 20;
     this.inMenus = true;
@@ -617,6 +618,7 @@ Engine.prototype = {
     
     "loadLevel": function(lvl) {
         this.curLevel = lvl;
+        this.retries = 0;
         $("#tf").attr('src', 'index2.html?lvl='+lvl);
         MODEL.ready = false;
         MODEL.onLevelCallback = $.proxy(this, "initLevel");
@@ -869,7 +871,6 @@ Engine.prototype = {
     "reset": function() {
         this.curCoins = MODEL.startCoins;
         this.playing = false;
-
         if (MODEL.startRotation == "UP")
             this.playerOff = this.playerRotations.UP;
         else if (MODEL.startRotation == "RIGHT")
@@ -1169,6 +1170,7 @@ Engine.prototype = {
 
     "death": function() {
         this.allowInput = false;
+        this.retries += 1;
         var d2 = $.proxy(this, "death2");
         var tween = new Kinetic.Tween({
             node: this.stage,

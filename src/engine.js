@@ -1248,7 +1248,7 @@ function checkKey(ev) {
         DATA.snds["level"].muted = !DATA.snds["level"].muted;
     else if (code == 80 || code == 27)
         e.showMenu();
-    else if (code == ENTER)
+    else if (code == ENTER || code == 32)
         e.requestMove = ENTER;
     else if (code == 49)
         e.rescale(1);

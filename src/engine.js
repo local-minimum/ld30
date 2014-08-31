@@ -712,7 +712,7 @@ Engine.prototype = {
             }
             A.push(String.fromCharCode((v + j + 1) * A[j].charCodeAt(0) % chrs + lB));
         }
-        console.log(A.join(""), this.curLevel, this.skippedLevels);
+        //console.log(A.join(""), this.curLevel, this.skippedLevels);
         $("#jumpCode").val(A.join(""));
     },
 
@@ -784,7 +784,7 @@ Engine.prototype = {
                 A.push(v.length - i);
         }
 
-        console.log(cL, s, A);
+        //console.log(cL, s, A);
 
         if (A.length != s) {
             console.log("Try cheating", "wrong number of skips");
@@ -955,7 +955,7 @@ Engine.prototype = {
 
         DATA.snds['level'].play();
 
-        console.log("Menu ready");
+        //console.log("Menu ready");
 
     },
 

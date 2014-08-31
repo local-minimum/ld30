@@ -556,7 +556,7 @@ DATA.loading = function() {
 function Engine() {
     this.MOVABLES = 4;
     this.COINS = 3;
-    this.UI = undefined;
+    this.UI = new Kinetic.Layer();
     this.playerRotations = {
         UP: {
             rotation: 0,
@@ -579,6 +579,7 @@ function Engine() {
     this.curLevel = 0;    
     this.retries = 0;
     this.skippedLevels = new Array();
+    this.cheaters = new Array();
     this.maxLevel = 20;
     this.inMenus = true;
     this.knownActiveLayers = undefined;
@@ -682,6 +683,10 @@ Engine.prototype = {
         if (this.curLevel <= 0)
             return;
         this.skippedLevels.push(this.curLevel);
+        this.cheaters.push(DATA.imgs["cheat"].clone(
+            {x: SHAPE_X * Math.random() - 150,
+             y: SHAPE_Y * Math.random() - 40}));
+        this.UI.add(this.cheaters[this.cheaters.length - 1]);
         this.nextLevel();
     },
 
@@ -1038,6 +1043,7 @@ Engine.prototype = {
             };
         
 
+        this.stage.add(this.UI);
         $("#lvl").html("Level " + this.curLevel + ": " + MODEL.name);
         this.generateCode();
         this.reset();
@@ -1138,7 +1144,16 @@ Engine.prototype = {
                 duration: 0.03*3,
                 easing: Kinetic.Easings.EaseInOut
             });
+            var tween2 = new Kinetic.Tween({
+                node: this.UI,
+                offsetY: -this.offsetY,
+                offsetX: -this.offsetX,
+                duration: 0.03*3,
+                easing: Kinetic.Easings.EaseInOut
+
+            });
             tween.play();
+            tween2.play();
             //this.drawLayers[i].offsetX(this.offsetX); 
             //this.drawLayers[i].offsetY(this.offsetY); 
             this.moved = false;
@@ -1146,7 +1161,7 @@ Engine.prototype = {
         for (var i=0; i<this.drawLayers.length; i++)
             this.drawLayers[i].draw()
 
-        //this.UI.draw();
+        this.UI.draw();
     },
 
     "draw" : function() {
@@ -1359,7 +1374,8 @@ Engine.prototype = {
                 ["menuCandy1", "img/menuCandy1.png"],
                 ["menuCandy2", "img/menuCandy2.png"],
                 ["menuCandy3", "img/menuCandy3.png"],
-                ["theEnd", "img/theEnd.png"]];
+                ["theEnd", "img/theEnd.png"],
+                ["cheat", "img/cheater.png"]];
 
         var snds = [
                 ["coin", "sound/coin"],

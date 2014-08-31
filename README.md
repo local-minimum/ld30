@@ -23,7 +23,6 @@ bring them all together again.
 TODO
 ----
 
-* CSS: Large text on shards left indicator
 * CSS/CODE: Flash background on shards left when low on shards (<7?)
 * CSS/CODE: Play low on shards warning every second when low on shards
 * MUSIC: New music please
@@ -38,6 +37,7 @@ TODO
 DONE
 ----
 
+* CSS: Large text on shards left indicator
 * LVL: Revise lvl 9? to be easier
 * LVL: Make lvl 4 have lots of time
 * CODE: Win game sceene

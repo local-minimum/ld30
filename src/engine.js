@@ -24,6 +24,7 @@ var ENTER = 13;
 var BASE_OPACITY = 0.45;
 var ACTIVE_OPACITY = 0.3;
 var STAGE_OPACITY = 1;
+var JUMP_TO_FUNC = undefined;
 
 function Mob()
 {
@@ -691,10 +692,11 @@ Engine.prototype = {
             A.push(String.fromCharCode((v + j + 1) * A[j].charCodeAt(0) % chrs + lB));
         }
         console.log(A.join(""), this.curLevel, this.skippedLevels);
-        return A.join("");
+        $("#jumpCode").val(A.join(""));
     },
 
-    "setStateFromCode": function(code) {
+    "setStateFromCode": function() {
+        var code = $("#jumpCode").val();
         if (code.length != 4)
             return;
 
@@ -706,7 +708,7 @@ Engine.prototype = {
         var C = code.toUpperCase().charCodeAt(2) - lB;
         var D = code.toUpperCase().charCodeAt(3) - lB;
 
-        console.log(A, B, C, D);
+        //console.log(A, B, C, D);
 
         var BA = B - A;
         while ((BA < lB || BA % lB != 0) && BA < lB * 20)
@@ -756,10 +758,12 @@ Engine.prototype = {
 
 
         var A = new Array();
-        for (var i=0;i<v.length;i++) {
+        for (var i=v.length-1;i>=0;i--) {
             if (v[i] == '1')
                 A.push(v.length - i);
         }
+
+        console.log(cL, s, A);
 
         if (A.length != s) {
             console.log("Try cheating", "wrong number of skips");
@@ -773,7 +777,8 @@ Engine.prototype = {
             }
 
         }
-        console.log(cL, s, A);
+        this.skippedLevels = A;
+        this.loadLevel(cL);
 
     },
 
@@ -1335,6 +1340,11 @@ Engine.prototype = {
         this.loadSounds(snds);
         
         this.coinsText = $("#shards");
+        JUMP_TO_FUNC = $.proxy(this, "setStateFromCode");
+
+        $("#jumpAction").on("click", function() {
+            JUMP_TO_FUNC();
+        });
 
         //Setting up callbacks
         var f = $.proxy(this, "draw");

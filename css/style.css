@@ -108,6 +108,16 @@ h2 {
     margin:30px auto;
 }
 
+#jumpTo {
+    width: 300px;
+    margin: 0px; auto;
+    color: #5e0000;
+}
+
+#jumpCode {
+    width: 60px;
+}
+
 #inner2 {
     width:620px;
     margin: 30px auto;

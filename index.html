@@ -10,43 +10,49 @@
 <body>
 <div id="outer">
     <div id="inner">
-<div id="game"></div>
-<div id="gameStatus">
-<div id="lvl"></div>
-<div id="shards"></div>
-</div>
-</div>
-<div id="inner2">
-<div id="howto">
-    <h2>How to play:</h2>
-    <p>You, <img src="img/playerIco.png">, must make it to
-    <img src="img/goal.png"> while avoiding <img src="img/mobIco.png">
-    before you run out of <img src="img/coin.png">
-    using only <img src="img/keys.png"> (<em>WASD</em> works too) and your wit.</p>
-        <p>Press <img src="img/mute.png"> to mute the music.</p>
-        <p>Press <img src="img/pauseP.png"> / <img src="img/pauseEsc.png"> to
-        pause (get to the menu).</p>
-        <p>Numbers <img src="img/n1.png"> to <img src="img/n4.png"> changes zoom.</p>
-        <p><img src="img/restart.png"> quickly restarts current level.</p>
-</div>
-<div id="about">
-<p>
-The world has separated onto three planes.
-Scattered piecies of what once was a comforting and
-predictable whole have become a dangerous place to live in.
-Little beetle scurries between the emergent worlds.
-There still are a few connections between them.</p>
-<p>
-Now it is up to you to help little beetle reach the beacons in a daring attempt to bring the
-worlds back together as one.</p>
-</p>
-<p>
-<em>This game was made by <strong>Local Minimum</strong> and 
-    <strong>bjonor</strong> for Ludum Dare 30.
-There is a git-repo
-<a href="https://github.com/local-minimum/ld30">here</a>.
-Feel free to use and abuse all in it as you please.</em></p>
-</div>
+        <div id="game"></div>
+        <div id="gameStatus">
+            <div id="lvl"></div>
+            <div id="shards"></div>
+        </div>
+        <div id="jumpTo">
+            <span>Quick Jump-To Code:</span>
+            <input type="text" name="jumpCode" id="jumpCode">
+            <input type="submit" value="Go!" id="jumpAction">
+        </div>
+    </div>
+    <div id="inner2">
+        <div id="howto">
+            <h2>How to play:</h2>
+            <p>You, <img src="img/playerIco.png">, must make it to
+            <img src="img/goal.png"> while avoiding <img src="img/mobIco.png">
+            before you run out of <img src="img/coin.png">
+            using only <img src="img/keys.png"> (<em>WASD</em> works too) and your wit.</p>
+                <p>Press <img src="img/mute.png"> to mute the music.</p>
+                <p>Press <img src="img/pauseP.png"> / <img src="img/pauseEsc.png"> to
+                pause (get to the menu).</p>
+                <p>Numbers <img src="img/n1.png"> to <img src="img/n4.png"> changes zoom.</p>
+                <p><img src="img/restart.png"> quickly restarts current level.</p>
+        </div>
+        <div id="about">
+            <p>
+            The world has separated onto three planes.
+            Scattered piecies of what once was a comforting and
+            predictable whole have become a dangerous place to live in.
+            Little beetle scurries between the emergent worlds.
+            There still are a few connections between them.</p>
+            <p>
+            Now it is up to you to help little beetle reach the beacons in a daring attempt to bring the
+            worlds back together as one.</p>
+            </p>
+            <p>
+            <em>This game was made by <strong>Local Minimum</strong> and 
+                <strong>bjonor</strong> for Ludum Dare 30.
+            There is a git-repo
+            <a href="https://github.com/local-minimum/ld30">here</a>.
+            Feel free to use and abuse all in it as you please.</em></p>
+        </div>
+    </div>
 </div>
 <script type="text/javascript" src="src/engine.js"></script>
 <iframe src="index2.html" id="tf"></iframe>

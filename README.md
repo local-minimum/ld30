@@ -23,7 +23,6 @@ bring them all together again.
 TODO
 ----
 
-* CSS/CODE: Flash background on shards left when low on shards (<7?)
 * CSS/CODE: Play low on shards warning every second when low on shards
 * SOUNDS: Master volumes on effects
 * CODE / GRAPHICS: Add a "skip level / loose esteme" button
@@ -36,6 +35,7 @@ TODO
 DONE
 ----
 
+* CSS/CODE: Flash background on shards left when low on shards (<7?)
 * MUSIC: New music please
 * CSS: Large text on shards left indicator
 * LVL: Revise lvl 9? to be easier

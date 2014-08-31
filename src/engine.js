@@ -962,7 +962,6 @@ Engine.prototype = {
         }
 
         //this.coinsText.text("Shards: " + this.curCoins);
-        this.coinsText.html("Shards: " + this.curCoins);
 
         if (this.movedMob) {
             for (var i=0; i<MODEL.mobs.length; i++) {
@@ -970,7 +969,17 @@ Engine.prototype = {
                 this.mobs[i].x(mobP[2] * 64 + 15);
                 this.mobs[i].y(mobP[1] * 42 - 4);
             }
+
             this.movedMob = false;
+        }
+
+        if (this.ticker % 11 == 0) {
+            this.coinsText.html("Shards: " + this.curCoins);
+            if (this.curCoins < 10 && this.ticker % 22 == 0) {
+                this.coinsText.attr("class", "urgentShard");
+            } else {
+                this.coinsText.attr("class", "");
+            }
         }
 
         if (this.moved) {

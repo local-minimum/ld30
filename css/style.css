@@ -79,6 +79,11 @@ h2 {
     font-weight: bold;
 }
 
+.urgentShard {
+    background-color: #f24f00 !important;
+    color: #5e0000;
+}
+
 #howto {
     background-color: #fff;
     color: #5e0000;

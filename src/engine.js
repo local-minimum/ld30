@@ -574,6 +574,7 @@ function Engine() {
     };
     this.playerOff = this.playerRotations.UP;
     this.curLevel = 0;    
+    this.skippedLevels = new Array();
     this.maxLevel = 20;
     this.inMenus = true;
     this.knownActiveLayers = undefined;
@@ -670,6 +671,110 @@ Engine.prototype = {
             var f = $.proxy(this, "winFinal");
             setTimeout(f, 10000);
         }
+    },
+
+    "generateCode": function() {
+        var lB = 65;
+        var chrs = 23;
+        var A = new Array();
+        var s = this.skippedLevels.length + 1;
+
+        for (var i=0; i<2; i++) {
+            A.push(String.fromCharCode(
+                (this.curLevel * lB) * (s + i) % chrs + lB));
+        }
+        for (var j=0; j<2; j++) {
+            var v = 0;
+            for (var i=j; i< s - 1; i+=2) {
+                v += Math.pow(2, this.skippedLevels[i]);
+            }
+            A.push(String.fromCharCode((v + j + 1) * A[j].charCodeAt(0) % chrs + lB));
+        }
+        console.log(A.join(""), this.curLevel, this.skippedLevels);
+        return A.join("");
+    },
+
+    "setStateFromCode": function(code) {
+        if (code.length != 4)
+            return;
+
+        var lB = 65;
+        var chrs = 23;
+
+        var A = code.toUpperCase().charCodeAt(0) - lB;
+        var B = code.toUpperCase().charCodeAt(1) - lB;
+        var C = code.toUpperCase().charCodeAt(2) - lB;
+        var D = code.toUpperCase().charCodeAt(3) - lB;
+
+        console.log(A, B, C, D);
+
+        var BA = B - A;
+        while ((BA < lB || BA % lB != 0) && BA < lB * 20)
+            BA += chrs;
+
+        if (BA % lB != 0) {
+            console.log("Try cheating", "Level not exist");
+            return;
+        }
+
+        var cL = BA / lB
+
+        while ((A < lB * cL || A % (lB * cL) != 0) && A < lB * cL * (cL + 1))
+            A += chrs;
+
+        if (A % (lB * cL) != 0) {
+            console.log("Try cheating", "Impossible number of skips");
+            return;
+        }
+
+        var s = A / (lB * cL) - 1;
+
+        var A = code.toUpperCase().charCodeAt(0);
+        var B = code.toUpperCase().charCodeAt(1);
+
+        while ((C < 1 * A || C % A != 0) && C < Math.pow(2, 21))
+            C += chrs;
+
+        if (C % A != 0) {
+            console.log("Try cheating", "Second Last character");
+            return;
+        }
+
+        var v = C/A - 1;
+
+        while ((D < 2 * B || D % B != 0) && C < Math.pow(2, 21))
+            D += chrs;
+
+        if (D % B != 0) {
+            console.log("Try cheating", "Last character");
+            return;
+        }
+
+        v += D/B - 2;
+
+        v = v.toString(2);
+
+
+        var A = new Array();
+        for (var i=0;i<v.length;i++) {
+            if (v[i] == '1')
+                A.push(v.length - i);
+        }
+
+        if (A.length != s) {
+            console.log("Try cheating", "wrong number of skips");
+            return;
+        }
+
+        for (var i=0;i<A.length;i++) {
+            if (A[i] >= cL) {
+                console.log("Try cheating", "impossible skip");
+                return;
+            }
+
+        }
+        console.log(cL, s, A);
+
     },
 
     "rescale": function(s) {
@@ -900,9 +1005,10 @@ Engine.prototype = {
         
 
         $("#lvl").html("Level " + this.curLevel + ": " + MODEL.name);
-
+        this.generateCode();
         this.reset();
         this.levelStartTime = Date.now();
+
     },
 
     "drawLoading": function() {

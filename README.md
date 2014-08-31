@@ -23,8 +23,6 @@ bring them all together again.
 TODO
 ----
 
-* CODE / GRAPHICS: Add a "skip level / loose esteme" button
-* CODE / GRAPHICS: Add a "Regret cheating button"
 * CODE / GRAPHICS: Add "CHEATER" disturbing effect if cheated.
 
 SKIP
@@ -36,6 +34,8 @@ SKIP
 DONE
 ----
 
+* CODE / GRAPHICS: Add a "skip level / loose esteme" button
+* CODE / GRAPHICS: Add a "Regret cheating button"
 * CODE: Generate codes for getting to level X
 * SOUNDS: Master volumes on effects
 * CSS/CODE: Flash background on shards left when low on shards (<7?)

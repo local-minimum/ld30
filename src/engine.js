@@ -679,14 +679,47 @@ Engine.prototype = {
         }
     },
 
+    "cheatTweening" : function(e) {
+        var inCheaters = false;
+        for (var i=0; i<this.cheaters.length; i++) {
+            if (this.cheaters[i] = e) {
+                inCheaters = true;
+                break;
+            }
+        }
+
+        if (!inCheaters)
+            return;
+
+        var f = $.proxy(this, "cheatTweening");
+
+        var tween = new Kinetic.Tween(
+            {node: e,
+             x: SHAPE_X * Math.random() - 150,
+             y: SHAPE_Y * Math.random() - 40,
+             duration: 2,
+             onFinish: function() {
+                 f(e);
+             }
+            });
+
+        tween.play();
+    },
+
+    "addCheater": function() {
+        var e = DATA.imgs["cheat"].clone(
+            {x: SHAPE_X * Math.random() - 150,
+             y: SHAPE_Y * Math.random() - 40});
+        this.cheaters.push(e);
+        this.UI.add(e);
+        this.cheatTweening(e);
+    },
+
     "skipLevel": function() {
         if (this.curLevel <= 0)
             return;
         this.skippedLevels.push(this.curLevel);
-        this.cheaters.push(DATA.imgs["cheat"].clone(
-            {x: SHAPE_X * Math.random() - 150,
-             y: SHAPE_Y * Math.random() - 40}));
-        this.UI.add(this.cheaters[this.cheaters.length - 1]);
+        this.addCheater();
         this.nextLevel();
     },
 
@@ -694,6 +727,7 @@ Engine.prototype = {
         if (this.skippedLevels.length == 0)
             return;
 
+        this.cheaters.pop().destroy();
         this.loadLevel(this.skippedLevels.pop());
 
         if (this.skippedLevels.length == 0)
@@ -804,6 +838,9 @@ Engine.prototype = {
 
         }
         this.skippedLevels = A;
+        for (var i=0;i<A.length;i++)
+            this.addCheater();
+
         this.loadLevel(cL);
 
     },
@@ -1194,6 +1231,9 @@ Engine.prototype = {
     "winFinal": function() {
         this.reset();
         this.skippedLevels = [];
+        while (this.cheaters.length > 0)
+            this.cheaters.pop().destroy();
+
         $("#regretCheat").attr("class", "hiddenElem");
         this.showMenu();
     },
@@ -1227,6 +1267,8 @@ Engine.prototype = {
                     if (this.menuStart) {
                         this.curLevel = 0;
                         this.skippedLevels = [];
+                        while (this.cheaters.length > 0)
+                            this.cheaters.pop().destroy();
                         $("#regretCheat").attr("class", "hiddenElem");
                         this.nextLevel();
                     }

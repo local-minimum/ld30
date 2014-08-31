@@ -1358,6 +1358,9 @@ Engine.prototype = {
 var e = new Engine();
 e.start();
 function checkKey(ev) {    
+    if ($("#jumpCode").is(":focus"))
+        return true;
+
     var code = ev.keyCode || ev.witch;
     if (code == UP || code == 87)
         e.requestMove = UP;

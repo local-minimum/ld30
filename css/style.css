@@ -64,14 +64,19 @@ h2 {
     width: 70%;
     background-color: #5e0000;
     display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+
 }
 
 #shards {
-    width: 80px;
+    width: 160px;
     background-color: #5e0000;
     right: 0px;
     left: auto;
     display: inline-block;
+    font-size: 200%;
+    font-weight: bold;
 }
 
 #howto {

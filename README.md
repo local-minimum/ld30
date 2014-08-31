@@ -23,18 +23,21 @@ bring them all together again.
 TODO
 ----
 
-* CSS/CODE: Play low on shards warning every second when low on shards
-* SOUNDS: Master volumes on effects
 * CODE / GRAPHICS: Add a "skip level / loose esteme" button
 * CODE / GRAPHICS: Add a "Regret cheating button"
 * CODE / GRAPHICS: Add "CHEATER" disturbing effect if cheated.
 * CODE: Generate codes for getting to level X
 
+SKIP
+----
+
 * CSS: Variables for game area?
+* CSS/CODE: Play low on shards warning every second when low on shards
 
 DONE
 ----
 
+* SOUNDS: Master volumes on effects
 * CSS/CODE: Flash background on shards left when low on shards (<7?)
 * MUSIC: New music please
 * CSS: Large text on shards left indicator

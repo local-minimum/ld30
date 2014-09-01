@@ -1181,16 +1181,18 @@ Engine.prototype = {
                 duration: 0.03*3,
                 easing: Kinetic.Easings.EaseInOut
             });
-            var tween2 = new Kinetic.Tween({
-                node: this.UI,
-                offsetY: -this.offsetY,
-                offsetX: -this.offsetX,
-                duration: 0.03*3,
-                easing: Kinetic.Easings.EaseInOut
+            if (this.cheaters.length > 0) {
+				var tween2 = new Kinetic.Tween({
+					node: this.UI,
+					offsetY: -this.offsetY,
+					offsetX: -this.offsetX,
+					duration: 0.03*3,
+					easing: Kinetic.Easings.EaseInOut
 
-            });
+				});
+				tween2.play();
+			}
             tween.play();
-            tween2.play();
             //this.drawLayers[i].offsetX(this.offsetX); 
             //this.drawLayers[i].offsetY(this.offsetY); 
             this.moved = false;
@@ -1198,7 +1200,8 @@ Engine.prototype = {
         for (var i=0; i<this.drawLayers.length; i++)
             this.drawLayers[i].draw()
 
-        this.UI.draw();
+        if (this.cheaters.length > 0)
+        	this.UI.draw();
     },
 
     "draw" : function() {

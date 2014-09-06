@@ -882,8 +882,8 @@ Engine.prototype = {
                 DATA.imageParts++;
             }
 
-            if (imageArray[i].length == 2) {
-                DATA.imgs[imageArray[i][0]] = new Kinetic.Image( {
+            if (imageArray[i].anim == undefined) {
+                DATA.imgs[imageArray[i].name] = new Kinetic.Image( {
                     x: 0,
                     y: 0,
                     image: imageObj,
@@ -896,14 +896,27 @@ Engine.prototype = {
                     frameRate: 7,
                     image: imageObj,
                     animation: 'default'
-                }
-                for (var key in imageArray[i][2])
-                    struct[key] = imageArray[i][2][key];
+                };
+                for (var key in imageArray[i].anim)
+                    struct[key] = imageArray[i].anim[key];
 
-                DATA.imgs[imageArray[i][0]] = new Kinetic.Sprite(struct);
+                DATA.imgs[imageArray[i].name] = new Kinetic.Sprite(struct);
             }
-            imageObj.src = imageArray[i][1]
-            //DATA.imgs[imageArray[i][0]].cache();
+            if (imageArray[i].callback) {
+                DATA.imgs[imageArray[i].name].clickCB = $.proxy(this,
+                                 imageArray[i].callback.method, 
+                                 imageArray[i].callback.args);
+
+                DATA.imgs[imageArray[i].name].on("click", function(evt) {
+                    evt.target.clickCB(evt.target);
+                }).on( "mouseover", function(evt) {
+                    document.body.style.cursor = 'pointer';
+                }).on( "mouseout", function(evt) {
+                    document.body.style.cursor = 'default';
+                });
+            }
+
+            imageObj.src = imageArray[i].file;
         }
     },
 
@@ -1277,20 +1290,25 @@ Engine.prototype = {
         this.reset();
     },
 
+    "startNewGame": function(data, node) {
+        this.curLevel = 0;
+        this.skippedLevels = [];
+        while (this.cheaters.length > 0)
+            this.cheaters.pop().destroy();
+        $("#regretCheat").attr("class", "hiddenElem");
+        this.nextLevel();
+        this.hideMenu();
+    },
+
     "update": function() {
         if (DATA.loaded()) {
             if (this.inMenus) {
 
                 if (this.requestMove == ENTER) {
                     if (this.menuStart) {
-                        this.curLevel = 0;
-                        this.skippedLevels = [];
-                        while (this.cheaters.length > 0)
-                            this.cheaters.pop().destroy();
-                        $("#regretCheat").attr("class", "hiddenElem");
-                        this.nextLevel();
-                    }
-                    this.hideMenu();
+                        this.startNewGame();
+                    } else
+                        this.hideMenu();
                 } else if (this.requestMove == UP || this.requestMove == DOWN) {
                     if (this.curLevel > 0)
                         this.menuStart = !this.menuStart;
@@ -1407,10 +1425,11 @@ Engine.prototype = {
 
         var imgs = [
                 //DATA-key, src, width, heigh
-                [0, "img/c0.png"],
-                [1, "img/c1.png"],
-                [2, "img/c2.png"],
-                ["player", "img/player.png", {animations: {
+                {name: 0, file: "img/c0.png"},
+                {name: 1, file: "img/c1.png"},
+                {name: 2, file: "img/c2.png"},
+                {name: "player", file: "img/player.png", 
+                 anim: {animations: {
                     standing: [
                         0, 0, 23, 29,
                         24, 0, 23, 29],
@@ -1418,27 +1437,32 @@ Engine.prototype = {
                         48, 0, 26, 34]},
                     frameRate: 2,
                     animation: 'standing'
-                }],
-                ["goal", "img/goal.png"],
-                ["mob", "img/mob.png", {animations: {
+                }},
+                {name: "goal", file: "img/goal.png"},
+                {name: "mob", file: "img/mob.png",
+                 anim: {animations: {
                     standing: [
                         0, 0, 27, 31,
                         27, 0, 32, 31,
                         60, 0, 26, 31
                     ]},
                     animation: 'standing'
-                    }],
-                ["coin", "img/coin.png"],
-                ["title", "img/title.png"],
-                ["startI", "img/startInactive.png"],
-                ["startA", "img/startActive.png"],
-                ["resumeI", "img/resumeInactive.png"],
-                ["resumeA", "img/resumeActive.png"],
-                ["menuCandy1", "img/menuCandy1.png"],
-                ["menuCandy2", "img/menuCandy2.png"],
-                ["menuCandy3", "img/menuCandy3.png"],
-                ["theEnd", "img/theEnd.png"],
-                ["cheat", "img/cheater.png"]];
+                    }},
+                {name: "coin", file: "img/coin.png"},
+                {name: "title", file: "img/title.png"},
+                {name: "startI", file:"img/startInactive.png",
+                    callback: {method:"startNewGame"}},
+                {name: "startA", file: "img/startActive.png",
+                    callback: {method:"startNewGame"}},
+                {name: "resumeI", file: "img/resumeInactive.png",
+                    callback: {method:"hideMenu"}},
+                {name: "resumeA", file: "img/resumeActive.png",
+                    callback: {method:"hideMenu"}},
+                {name: "menuCandy1", file: "img/menuCandy1.png"},
+                {name: "menuCandy2", file: "img/menuCandy2.png"},
+                {name: "menuCandy3", file: "img/menuCandy3.png"},
+                {name: "theEnd", file: "img/theEnd.png"},
+                {name: "cheat", file: "img/cheater.png"}];
 
         var snds = [
                 ["coin", "sound/coin"],

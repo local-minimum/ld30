@@ -720,6 +720,7 @@ Engine.prototype = {
         var e = DATA.imgs["cheat"].clone(
             {x: SHAPE_X * Math.random() - 150,
              y: SHAPE_Y * Math.random() - 40});
+        e.clickCB = DATA.imgs["cheat"].clickCB;
         this.cheaters.push(e);
         this.UI.add(e);
         this.cheatTweening(e);
@@ -907,7 +908,7 @@ Engine.prototype = {
                                  imageArray[i].callback.method, 
                                  imageArray[i].callback.args);
 
-                DATA.imgs[imageArray[i].name].on("click", function(evt) {
+                DATA.imgs[imageArray[i].name].on($.mobile.support.touch ? "tap" : "click", function(evt) {
                     evt.target.clickCB(evt.target);
                 }).on( "mouseover", function(evt) {
                     document.body.style.cursor = 'pointer';
@@ -1045,8 +1046,10 @@ Engine.prototype = {
             for (var y=0; y<MODEL.level[i].length; y++) {
                 for (var x=0; x<MODEL.level[i][y].length; x++) {
                     if (MODEL.level[i][y][x] == 1) {
-                        this.drawLayers[i].add(DATA.imgs[i].clone({
-                            x: x*64, y:y*42}));
+                        var e = DATA.imgs[i].clone({
+                            x: x*64, y:y*42});
+                        e.clickCB = DATA.imgs[i].clickCB;
+                        this.drawLayers[i].add(e);
                     }
                 }
             }
@@ -1300,6 +1303,19 @@ Engine.prototype = {
         this.hideMenu();
     },
 
+    "clickNavigate": function(data, node) {
+        var relX = (node.x() - MODEL.player[2] * 64) / SHAPE_X;
+        var relY = (node.y() - MODEL.player[1] * 42) / SHAPE_Y;
+        if (relX > 0 && (relY >= 0 && relX > relY || relY < 0 && relX > -relY))
+            this.requestMove = RIGHT;
+        else if (relX < 0 && (relY >= 0 && -relX > relY || relY < 0 && -relX > -relY))
+            this.requestMove = LEFT;
+        else if (relY < 0)
+            this.requestMove = UP;
+        else 
+            this.requestMove = DOWN;
+    },
+
     "update": function() {
         if (DATA.loaded()) {
             if (this.inMenus) {
@@ -1425,9 +1441,9 @@ Engine.prototype = {
 
         var imgs = [
                 //DATA-key, src, width, heigh
-                {name: 0, file: "img/c0.png"},
-                {name: 1, file: "img/c1.png"},
-                {name: 2, file: "img/c2.png"},
+                {name: 0, file: "img/c0.png", callback: {method: "clickNavigate"}},
+                {name: 1, file: "img/c1.png", callback: {method: "clickNavigate"}},
+                {name: 2, file: "img/c2.png", callback: {method: "clickNavigate"}},
                 {name: "player", file: "img/player.png", 
                  anim: {animations: {
                     standing: [
@@ -1484,15 +1500,15 @@ Engine.prototype = {
         CHEAT_FUNC = $.proxy(this, "skipLevel");
         REGRET_CHEAT_FUNC = $.proxy(this, "regretLastSkip");
 
-        $("#jumpAction").on("click", function() {
+        $("#jumpAction").on($.mobile.support.touch ? "tap" :"click", function() {
             JUMP_TO_FUNC();
         });
 
-        $("#cheat").on("click", function() {
+        $("#cheat").on($.mobile.support.touch ? "tap" : "click", function() {
             CHEAT_FUNC();
         });
 
-        $("#regretCheat").on("click", function() {
+        $("#regretCheat").on($.mobile.support.touch ? "tap" : "click", function() {
             REGRET_CHEAT_FUNC();
         });
 

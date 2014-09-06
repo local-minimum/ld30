@@ -532,22 +532,30 @@ var MODEL = new Model();
 
 var DATA = {
     "_loaded" : false,
-    "parts": 0,
-    "total": 20,
+    "imageParts" : 0,
+    "musicParts" : 0,
+    "loadStarted": undefined,
+    "imageTotal": 0,
+    "musicTotal": 0,
     "imgs" : new Array(),
     "snds" : new Array()
 
 };
 
-DATA.loaded = function() {
+DATA.loaded = function(part) {
     if (!DATA._loaded) {
-        DATA._loaded = DATA.loading() >= 1;
+        DATA._loaded = DATA.loading(part) >= 1;
     }
     return DATA._loaded;
 }
 
-DATA.loading = function() {
-    return DATA.parts / DATA.total;
+DATA.loading = function(part) {
+    if (part == undefined)
+        return (DATA.imageParts + DATA.musicParts) / (DATA.imageTotal + DATA.musicTotal);
+    else if (part == "images")
+        return DATA.imageParts / DATA.imageTotal;
+    else if (part == "music")
+        return DATA.musicParts / DATA.musicTotal;
 }
 
 /*
@@ -613,6 +621,7 @@ function Engine() {
         strokeWidth: 4,
         rotation: -120});
     this.loadingLayer = new Kinetic.Layer();
+    this.waitForSoundTime = 2;
     this.menuBeetle = undefined;
     this.menuStart = true;
     this.allowInput = true;
@@ -870,7 +879,7 @@ Engine.prototype = {
         for (var i=0; i<imageArray.length; i++) {
             var imageObj = new Image();
             imageObj.onload = function() {
-                DATA.parts++;
+                DATA.imageParts++;
             }
 
             if (imageArray[i].length == 2) {
@@ -912,7 +921,7 @@ Engine.prototype = {
         for (var i=0; i<sndsArray.length; i++) {
             DATA.snds[sndsArray[i][0]] = new Audio(sndsArray[i][1] + suffix);
             DATA.snds[sndsArray[i][0]].addEventListener(
-                    'canplaythrough', function() {DATA.parts++;}, false);
+                    'canplaythrough', function() {DATA.musicParts++;}, false);
         }
     },
 
@@ -1373,7 +1382,10 @@ Engine.prototype = {
 
             }
         } else {
-            
+           if (Date.now() - DATA.loadStarted > this.waitForSoundTime &&
+                   DATA.loading("images") >= 1)
+
+               DATA.loaded("images");
         }
 
         this.ticker++;
@@ -1436,7 +1448,9 @@ Engine.prototype = {
                 ["level", "sound/tune"]];
 
 
-        DATA.total = imgs.length + snds.length;
+        DATA.imageTotal = imgs.length;
+        DATA.musicTotal =  snds.length;
+        DATA.loadStarted = Date.now();
 
         this.loadImages(imgs);
         this.loadSounds(snds);

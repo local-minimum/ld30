@@ -132,8 +132,13 @@ function Model()
      * Coins
      * */
     this.startCoins = undefined;
+    /*
     this._coins = undefined;
     this.coins = undefined;
+    */
+    this.takenCoins = [];
+    this.incubatingCoins = [];
+    this.regeneratedCoins = [];
 
     /*
      * Player start rotation
@@ -216,17 +221,9 @@ Model.prototype =
 
         //Generate Coin-Map
         this.startCoins = lvlData.coins;
-        this._coins = new Array();
-        this.coins = new Array();
-        var t = 0;
-        for (var y=0; y<this.level[0].length; y++) {
-            this._coins.push(new Array());
-            this.coins.push(new Array());
-            for (var x=0; x<this.level[0][0].length; x++) {
-                this._coins[y].push(t);
-                this.coins[y].push(0);
-            }
-        }
+        this.takenCoins = [];
+        this.regeneratedCoins = [];
+        this.incubatingCoins = [];
 
         if (this.DEBUG)
         {
@@ -251,7 +248,12 @@ Model.prototype =
      */
 
     "coinAtPlayer": function() {
-        return this.coins[this.player[1]][this.player[2]] == 1
+        for (var i=0; i< this.incubatingCoins.length; i++) {
+            if (this.incubatingCoins[i].x == this.player[2] &&
+                    this.incubatingCoins[i].y == this.player[1])
+                return false;
+        }
+        return true;
     },
 
 
@@ -261,18 +263,35 @@ Model.prototype =
 
     "setCoinsStatus": function(delta) {
         var t = Date.now();
-        this._coins[this.player[1]][this.player[2]] = t;
-        this._coins[this.goal[1]][this.goal[2]] = t;
-        this.coins[this.player[1]][this.player[2]] = 0;
-        this.coins[this.goal[1]][this.goal[2]] = 0;
-        for (var y=0;y<this.coins.length;y++) {
-            for (var x=0; x<this.coins[0].length;x++) {
-                if (this.coins[y][x] < 1) {
-                    this.coins[y][x] = (t - this._coins[y][x]) / delta; 
-                    if (this.coins[y][x] > 1)
-                        this.coins[y][x] = 1;
-                }
+        var pos = {x: this.player[2], y: this.player[1], when: t};
+        var posIncubating = -1;
+        
+        for (var i=0; i<this.incubatingCoins.length; i++) {
+            if (this.incubatingCoins[i].x == pos.x &&
+                    this.incubatingCoins[i].y == pos.y) {
+                posIncubating = i;
+                break;
             }
+        }
+
+        if (posIncubating == -1) {
+            this.takenCoins.push(pos);
+            this.incubatingCoins.push(pos);
+        } else {
+            this.incubatingCoins[posIncubating] = pos;
+        }
+        var spawning = [];
+        for (var i=0; i<this.incubatingCoins.length; i++) {
+            if (this.incubatingCoins[i].when + delta < t) {
+                var spawn = this.incubatingCoins[i];
+                spawn.i = i;
+                spawning.push(spawn);
+            }
+        }
+        while (spawning.length > 0) {
+            var spawn = spawning.pop();
+            this.incubatingCoins.splice(spawn.i, 1);
+            this.regeneratedCoins.push(spawn);
         }
         return this;
     },
@@ -298,18 +317,6 @@ Model.prototype =
         {
             this.mobs[i].position = 0;
         }
-
-        for (var y=0; y<this.level[0].length; y++) {
-            for (var x=0; x<this.level[0][0].length; x++) {
-                this._coins[y][x] = 0;
-                this.coins[y][x] = 1;
-            }
-        }
-        var t = Date.now();
-        this._coins[this.player[1]][this.player[2]] = t;
-        this._coins[this.goal[1]][this.goal[2]] = t;
-        this.coins[this.player[1]][this.player[2]] = 0;
-        this.coins[this.goal[1]][this.goal[2]] = 0;
 
         if (this.DEBUG)
         {
@@ -540,9 +547,17 @@ var DATA = {
     "imageTotal": 0,
     "musicTotal": 0,
     "imgs" : new Array(),
-    "snds" : new Array()
+    "snds" : new Array(),
+    "_lastCheck" : -1
 
 };
+
+DATA.different = function() {
+    var cur = this.loading();
+    var ret = cur == this._lastCheck;
+    this._lastCheck = cur;
+    return ret;
+}
 
 DATA.loaded = function(part) {
     if (!DATA._loaded) {
@@ -962,6 +977,17 @@ Engine.prototype = {
         this.requestMove = undefined;
         this.allowInput = true;
 
+        MODEL.takenCoins = [];
+        while (MODEL.regeneratedCoins.length > 0) {
+            var pos = MODEL.regeneratedCoins.pop();
+            this.coins[pos.y][pos.x].visible(true);
+        }
+
+        while (MODEL.incubatingCoins.length > 0) {
+            var pos = MODEL.incubatingCoins.pop();
+            this.coins[pos.y][pos.x].visible(true);
+        }
+
         if (this.retries > 3)
             $("#cheat").attr("class", "");
         else
@@ -1068,13 +1094,13 @@ Engine.prototype = {
             this.drawLayers[this.COINS].destroyChildren();
         }
         this.coins = [];
-        for (var y=0; y<MODEL.coins.length; y++) {
+        for (var y=0; y<MODEL.level[0].length; y++) {
             this.coins.push([]);
-            for (var x=0; x<MODEL.coins[0].length; x++) {
+            for (var x=0; x<MODEL.level[0][0].length; x++) {
                 this.coins[y].push(DATA.imgs["coin"].clone({
                     x: x * 64 + 26, y: y * 42 + 10}));
                 this.drawLayers[this.COINS].add(this.coins[y][x]);
-                this.coins[y][x].visible(MODEL.coins[y][x] == 1);
+                this.coins[y][x].visible(!(MODEL.goal[2] == x && MODEL.goal[1] == y));
             }
         }
 
@@ -1117,8 +1143,10 @@ Engine.prototype = {
     },
 
     "drawLoading": function() {
-        this.loadingWedge.angle(360 * DATA.loading());
-        this.loadingLayer.draw();
+        if (DATA.different()) {
+            this.loadingWedge.angle(360 * DATA.loading());
+            this.loadingLayer.draw();
+        }
     },
 
     "drawMenu": function() {
@@ -1161,17 +1189,25 @@ Engine.prototype = {
         if (!this.allowInput)
             this.drawLayers[this.COINS].visible(false);
 
-		if (this.ticker % 2) {
+		if (true || this.ticker % 2) {
 			if (this.ticker % 20 > 9)
 				this.lvlGoal.y(MODEL.goal[1] * 42 - 19 + this.ticker % 10);
 			else
 				this.lvlGoal.y(MODEL.goal[1] * 42 - 10 - this.ticker % 10);
 
-			for (var y=0; y<MODEL.coins.length; y++) {
-				for (var x=0; x<MODEL.coins[0].length; x++) {
-					this.coins[y][x].visible(MODEL.coins[y][x] == 1);
-				}
-			}
+			while (MODEL.takenCoins.length != 0) {
+			    var pos = MODEL.takenCoins.pop();
+			    if (pos.x == undefined || pos.y == undefined)
+			        continue;
+				this.coins[pos.y][pos.x].visible(false);
+            }
+            while (MODEL.regeneratedCoins.length != 0) {
+			    var pos = MODEL.regeneratedCoins.pop();
+			    if (pos.x == undefined || pos.y == undefined)
+			        continue;
+				this.coins[pos.y][pos.x].visible(true);
+            }
+        
 		}
 
         //this.coinsText.text("Shards: " + this.curCoins);
@@ -1183,7 +1219,6 @@ Engine.prototype = {
                 this.mobs[i].y(mobP[1] * 42 - 4);
             }
 
-            this.movedMob = false;
         }
 
         if (this.ticker % 11 == 0) {
@@ -1226,15 +1261,11 @@ Engine.prototype = {
 
 	        this.drawLayers[MODEL.player[0]].moveToBottom();
 
-            this.moved = false;
         }
 
-        for (var i=0; i<this.drawLayers.length; i++) {
-            this.drawLayers[i].draw();
-		}
-
-        if (this.cheaters.length > 0)
-        	this.UI.draw();
+        this.stage.draw()
+        this.moved = false;
+        this.movedMob = false;
     },
 
     "draw" : function() {
@@ -1337,7 +1368,7 @@ Engine.prototype = {
             } else if (MODEL.ready && this.allowInput) {
 
                 if (MODEL.ready) {
-                    if (this.playing && this.ticker % 11 == 0)
+                    if (this.playing && this.ticker % 33 == 0)
                         this.curCoins --;
 
                     if (this.ticker % 17 == 0) {
@@ -1393,14 +1424,6 @@ Engine.prototype = {
                     this.win();
                     return;
                 }
-
-                /* This death no longer possible
-                if (!MODEL.isValidPosition()) {
-                    console.log("Fell off");
-                    this.death();
-                    return;
-                }
-                */
 
                 if (MODEL.isCaught()) {
                     console.log("Caught");
@@ -1516,9 +1539,9 @@ Engine.prototype = {
 
         //Setting up callbacks
         var f = $.proxy(this, "draw");
-        window.setInterval(f, 31);
+        window.setInterval(f, 47);
         var f2 = $.proxy(this, "update");
-        window.setInterval(f2, 33);
+        window.setInterval(f2, 31);
 
     }
 }

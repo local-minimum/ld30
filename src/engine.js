@@ -29,6 +29,8 @@ var CHEAT_FUNC = undefined;
 var REGRET_CHEAT_FUNC = undefined;
 var JUMP_TO_ELEM = $("#jumpCode");
 
+//$("#lvl").html("Touch " + $.mobile.support.touch);
+
 function Mob()
 {
     this.DEBUG = false;
